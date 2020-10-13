@@ -84,7 +84,7 @@ async def normal_reply(message):
 
     if user_msg == 'cls':
         async for message in bot.get_user(734861106698387548).history(limit=20):
-            if message.author.id == 734861106698387548:
+            if message.author.id == bot.user.id:
                 await message.delete()
                 # await asyncio.sleep(0.5)
         # await message.channel.purge(check=lambda m: m.author == bot.user)
