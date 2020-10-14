@@ -96,7 +96,7 @@ async def normal_reply(message):
         await message.channel.send(f'Hellow {str(message.author).split("#")[0]}')
 
     if user_msg == 'cls':
-        async for message in bot.get_user(734861106698387548).history(limit=20):
+        async for message in bot.get_user(734861106698387548).history(limit=10):
             if message.author.id == bot.user.id:
                 await message.delete()
                 # await asyncio.sleep(0.5)
@@ -318,7 +318,6 @@ async def unmute(ctx, member: discord.Member):
 #     else:
 #         return time
 
-@commands.has_role('Member')
 @bot.command(aliases=['remind', 'set_reminder'])
 async def remind_me(ctx, task, time, unit='min', *meta):
     try:
