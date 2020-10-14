@@ -1,12 +1,9 @@
 import discord
 from discord.ext import commands
-import random
 import asyncio
 import os
-import datetime
 from web_crawlers import GoogleWebCrawler
 from response import Respond
-import sys
 
 respond_to_user = Respond()
 
@@ -53,26 +50,11 @@ async def on_member_remove(member):
     print(f'{member} has left')
 
 
-@bot.command()
-async def send_msg(ctx, msg):
-    await ctx.author.send('This is msg')
-
-
-b = '760068374268346390'
-
-
 @bot.listen('on_message')
 async def normal_reply(message):
     global talk_agness, TALK_GPT
-    # print(message.guild)
-    # print(message.author.dmChannel)
-    print(message)
 
-    # print(message)
-    # if  message.guild is None and message.author != bot.user:
-    #
-    #     print(message.channel)
-    #     await message.author.send('This is msg')
+    print(message)
 
     if talk_agness:
         if message.author == bot.user:
@@ -99,22 +81,18 @@ async def normal_reply(message):
         async for message in bot.get_user(734861106698387548).history(limit=10):
             if message.author.id == bot.user.id:
                 await message.delete()
-                # await asyncio.sleep(0.5)
-        # await message.channel.purge(check=lambda m: m.author == bot.user)
-
     else:
-        if message.content in ['gm', 'good morning agness', 'good morning']:
+        if user_msg in ['gm', 'good morning agness', 'good morning']:
             await message.channel.send('Good Morning 🥰')
+        elif user_msg in ['gn', 'good night agness', 'good night']:
+            await message.channel.send('Good Night 🥰')
 
-
-# async for msg in channel.history():
-#     if msg.author == client.user:
-#         await msg.delete()
 
 @commands.has_role('Member')
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'N/W Ping is : {round(bot.latency * 1000)} ms')
+
 
 @commands.has_role('Member')
 @bot.command(aliases=['dog'])
@@ -136,6 +114,7 @@ async def clear(ctx, amount=4):
 async def welcome(ctx, *, person):
     await ctx.send(f'Welcome aboard {person.title()}, This is a special welcome from admin as well as from me 😃')
 
+
 @commands.has_role('Member')
 @bot.command(aliases=['agness'])
 async def intro(ctx, *, person):
@@ -155,6 +134,7 @@ async def search(ctx, *, query):
     await ctx.send(
         f"{c}"
     )
+
 
 @commands.has_role('Member')
 @bot.command()
@@ -184,15 +164,23 @@ async def evaluate(ctx, *, cmd):
         )
 
 
-@commands.has_permissions(mute_members=True)
 @bot.command()
+@commands.has_role('Staff')
 async def mute(ctx, member: discord.Member, time, unit='min', reason=None):
+    print(ctx)
+    muted = discord.Embed(
+        title='🤐  Mute User',
+        description=f"Mute Applied to {member.mention} for {time} {unit}",
+        colour=discord.Color.light_grey()
+    )
+    muted.set_footer(text='powered by : Agness')
+
     try:
         seconds = int(calculate_time(int(time), str(unit).lower()))
         muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
 
         await member.add_roles(muted_role, reason=reason)
-        await ctx.send(f"{member.mention} is muted for {time} {unit}")
+        await ctx.send(embed=muted)
         await asyncio.sleep(seconds)
         await member.remove_roles(muted_role, reason="Muted Time Up!")
     except Exception as e:
@@ -202,145 +190,140 @@ async def mute(ctx, member: discord.Member, time, unit='min', reason=None):
         )
 
 
-@commands.has_permissions(mute_members=True)
+@commands.has_role('Staff')
 @bot.command()
 async def unmute(ctx, member: discord.Member):
+    unmuted = discord.Embed(
+        title="Unmute 😀",
+        description=f"Mute removed! {member.mention} is now free to message.",
+        colour=discord.Color.green()
+    )
+    unmuted.set_footer(text='powered by : Agness')
     try:
         muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
         await member.remove_roles(muted_role, reason="Admin removed the mute")
-        await ctx.send(f'Mute removed! {member.mention} is now free to message.')
+        await ctx.send(embed=unmuted)
     except Exception as e:
         print(e)
         await ctx.send(
             "something went wrong with the command"
         )
 
-    # print(member)
-    # guild = ctx.guild
 
-    # await member.edit(mute=True)
-    # await ctx.send(f'{member.mention} Muted')
+@commands.has_role('Staff')
+@bot.command(aliases=['silence!'])
+async def shhh(ctx, *, time='5', unit='min'):
+    seconds = calculate_time(int(time), unit.lower())
+    muted = discord.Embed(
+        title='Silence! 🤫',
+        description=f"Channel is muted for {time} {unit} for everyone!",
+        colour=discord.Color.orange()
+    )
+    muted.set_footer(text='Muted by : Administrator')
 
-    # await ctx.send(
-    #     f"{word} {person}"
-    # )
+    unmuted = discord.Embed(
+        description=f"Silence removed! You can send messages now. ☑",
+        colour=discord.Color.green()
+    )
+    unmuted.set_footer(text='UnMuted by : Timer')
 
-
-#
-# def convert_timefmt(time, _12hours=True):
-#     # try:
-#         if not _12hours:
-#             fmt = datetime.datetime.strptime(time, "%I:%M %p")
-#             _24hourtimefmt = datetime.datetime.strftime(fmt, "%H:%M")
-#             return _24hourtimefmt
-#
-#         d = datetime.datetime.strptime(time, "%H:%M")
-#         _12hourtimefmt = d.strftime("%I:%M %p")
-#         return _12hourtimefmt
-# except:
-#     return False
-
-# def valid_timeformat(time,)
+    await ctx.send(embed=muted)
+    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
+    await asyncio.sleep(seconds)
+    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+    await ctx.send(embed=unmuted)
 
 
-# elif unit in ['am', 'pm']:
-#     _24hourtimefmt = ':'.join(str(datetime.datetime.today().time()).split(':')[:-1])
-#     _12hourtimefmt = convert_timefmt(_24hourtimefmt)
-#     if not _12hourtimefmt:
-#         return False
-#     current_noon = _12hourtimefmt.split(' ')[-1]
-#
-#     if unit.upper() != current_noon:
-#         current_hour, current_minute = _24hourtimefmt.split(':')
-#
-#         given_12to24 = convert_timefmt(f'{time_} {unit}', _12hours=False)
-#         if not given_12to24:
-#             return False
-#         reminder_hour, reminder_minute = given_12to24.split(':')
-#
-#         time_difference_hours = abs(int(reminder_hour)-int(current_hour))
-#         # time_difference_minutes = abs(int(reminder_minute)+int(current_minute))
-#         # print(time_difference_hours, time_difference_minutes)
-#         finnal_time = time_difference_hours*3600 + reminder_minute*60
-#         return finnal_time
-#
-#
-#     else:
-#         current_hour, current_minutes = int(datetime.datetime.today().now().hour), int(datetime.datetime.today().now().minute)
-#         given_time = convert_timefmt(f"{time_} {unit}", _12hours=False).split(':')
-#         # print(fii, '-------------------------------------')
-#
-#         # given_time = time_.split(':')
-#         # print(given_time)
-#
-#         # if len(given_time)==1:
-#         #     print('boop')
-#         #     reminder_hour, reminder_minute = given_time[0], 0
-#         # elif len(given_time)==2:
-#
-#         reminder_hour, reminder_minute = given_time
-#         reminder_hour = int(reminder_hour)
-#         reminder_minute = int(reminder_minute)
-#         if reminder_minute == 0:
-#             reminder_minute = current_minutes
-#         # print(reminder_hour-current_hour)
-#         print(reminder_minute)
-#
-#         set_reminder_hour = current_hour + abs(reminder_hour-current_hour)
-#         # set_reminder_minute = current_minutes + abs(reminder_minute-current_minutes)
-#         reminder_set_at = convert_timefmt(f"{set_reminder_hour}:{reminder_minute}")
-#         # print(reminder_hour, current_hour,)
-#
-#
-#         time_diffrence_hours = abs(int(reminder_hour - current_hour))
-#         time_diffrence_minutes = abs(int(reminder_minute - current_minutes))
-#         print(time_diffrence_minutes)
-#
-#         final_time = (time_diffrence_hours*3600) + (time_diffrence_minutes*60)
-#         return final_time
+@commands.has_role('Staff')
+@bot.command(aliases=['rm_silence!'])
+async def unshhh(ctx):
+    unmuted = discord.Embed(
+        description=f"Silence removed! You can send messages now. ☑",
+        colour=discord.Color.green()
+    )
+    unmuted.set_footer(text='UnMuted by : Administrator')
 
+    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+    await ctx.send(embed=unmuted)
 
-# def check_time(time_):
-#     time_split = time_.split(':')
-#     hour = int(time_split[0])
-#     minute = int(time_split[1])
-#     if hour > 12 or hour <= 0:
-#         return False
-#     if minute > 60 or minute < 0:
-#         return False
-#     return True
-#
-# def valid_timefmt(time):
-#     if len(time) == 1:
-#         return f'0{time}:00'
-#     elif len(time) == 2:
-#         return f'{time}:00'
-#     else:
-#         return time
 
 @bot.command(aliases=['remind', 'set_reminder'])
 async def remind_me(ctx, task, time, unit='min', *meta):
+    reminder_set = discord.Embed(
+        title='Reminder',
+        description=f"Hey {str(ctx.author).split('#')[0]}, I'll keep ur reminder in mind. {' ' * 10}",
+        colour=discord.Color.blurple()
+    )
+    reminder_set.add_field(name="Reminder for :", value=task, inline=False)
+    reminder_set.add_field(name="Time :", value=f"{time} {unit} remaining...", inline=False)
+    reminder_set.set_footer(text='powered by : Agness')
+
+    reminder_complete = discord.Embed(
+        title="It's your reminder...",
+        description=f"Hey {str(ctx.author).split('#')[0]}, Remember you told me to remind you for ur task.{' ' * 5}",
+        colour=discord.Color.red()
+    )
+    reminder_complete.add_field(name="Task :", value=task, inline=False)
+    reminder_complete.set_footer(text='powered by : Agness')
+
     try:
         seconds = int(calculate_time(int(time), str(unit).lower()))
         print(seconds)
-        await ctx.send(f"Reminder Set for    ---->     {task}. \n\nI'll remind you after {time} {unit}.")
+        await ctx.send(ctx.author.mention, embed=reminder_set)
 
         await asyncio.sleep(seconds)
 
-        await ctx.send(
-            f"\nREMINDER ALERT ! Hey <@{str(ctx.author.id)}> ```\n\nYou told me {time} {unit}"
-            f" ago to remind you for   ---->    '{task}'\n\n```")
+        await ctx.send(ctx.author.mention, embed=reminder_complete)
+
     except:
         await ctx.send(f'Something is not as what i expected...🤔... Unable to set reminder.'
                        f'\nTry again with right command format  : \n'
                        f'```.remind<space>"Your_Task_Name_Here"<space>TIME<space>Unit(mins or secs or hours)```')
 
 
-bot.run(BOT_TOKEN)
+@commands.has_permissions(administrator=True)
+@bot.command()
+async def ban(ctx, member: discord.Member, reason=None):
+    # try:
+    banembed = discord.Embed(
+        title='Ban User ❌ ',
+        description=f"Permanent Ban Applied 👌 to {member.id}",
+        colour=discord.Color.dark_red()
+    )
+    banembed.set_footer(text='powered by : Agness')
+    await member.ban(reason=reason)
+    await ctx.send(embed=banembed)
 
-# f = valid_timefmt('4:61pm','')
-# if f:
-#     if check_time(f):
-#         print(f)
-#     else:
-#         print('pissed')
+
+@commands.has_permissions(administrator=True)
+@bot.command()
+async def unban(ctx, *, member):
+    banned_users = await ctx.guild.bans()
+    user_dis = member
+    print('beep')
+
+    for banned_entry in banned_users:
+        user = banned_entry.user
+        if user.discriminator == user_dis:
+            await ctx.guild.unban(user)
+            print(banned_entry)
+            unbanembed = discord.Embed(
+                title='Unban User ✅',
+                description=f"{user.mention} is unbanned and allowed to interact.",
+                colour=discord.Color.green()
+            )
+            unbanembed.set_footer(text='powered by : Agness')
+
+            await ctx.send(embed=unbanembed)
+            return
+        else:
+            print('not found')
+
+
+@bot.command()
+async def invite(ctx):
+    link = await ctx.channel.create_invite(max_age=0)
+    await ctx.send(link)
+
+
+bot.run(BOT_TOKEN)
