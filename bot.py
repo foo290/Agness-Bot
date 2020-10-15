@@ -70,22 +70,22 @@ async def normal_reply(message):
             else:
                 content = f"Missed Command :: {msg} :: by :: {message.author}\n"
                 write_command(content)
-
-    user_msg = str(message.content).lower()
-
-    if user_msg == hot_word:
-        talk_agness = True
-        await message.channel.send(f'Hellow {str(message.author).split("#")[0]}')
-
-    if user_msg == 'cls':
-        async for message in bot.get_user(734861106698387548).history(limit=10):
-            if message.author.id == bot.user.id:
-                await message.delete()
     else:
-        if user_msg in ['gm', 'good morning agness', 'good morning']:
-            await message.channel.send('Good Morning 🥰')
-        elif user_msg in ['gn', 'good night agness', 'good night']:
-            await message.channel.send('Good Night 🥰')
+        user_msg = str(message.content).lower()
+
+        if user_msg == hot_word:
+            talk_agness = True
+            await message.channel.send(f'Hellow {str(message.author).split("#")[0]}')
+
+        if user_msg == 'cls':
+            async for message in bot.get_user(734861106698387548).history(limit=10):
+                if message.author.id == bot.user.id:
+                    await message.delete()
+        else:
+            if user_msg in ['gm', 'good morning agness', 'good morning']:
+                await message.channel.send('Good Morning 🥰')
+            elif user_msg in ['gn', 'good night agness', 'good night']:
+                await message.channel.send('Good Night 🥰')
 
 
 @commands.has_role('Member')
@@ -247,33 +247,63 @@ async def unshhh(ctx):
     await ctx.send(embed=unmuted)
 
 
+def get_reminder_embeds(p_user, s_user, task, time, unit):
+    print()
+    if s_user and str(s_user).startswith('<@!'):
+        m_reminder_set = discord.Embed(
+            title='Mutual Reminder',
+            description=f"Hey {p_user}, you've set a reminder for {s_user}."
+                        f" I'll keep in mind to remind you both.",
+            colour=discord.Color.blurple()
+        )
+        m_reminder_set.add_field(name="Reminder for :", value=task, inline=False)
+        m_reminder_set.add_field(name="Reminder Type :", value='Mutual (other user included)', inline=False)
+        m_reminder_set.add_field(name="Time :", value=f"{time} {unit} remaining...", inline=False)
+        m_reminder_set.set_footer(text='powered by : Agness')
+
+        m_reminder_complete = discord.Embed(
+            title="It's your reminder...",
+            description=f"Hey {s_user}, {p_user} told me to remind you for your task.",
+            colour=discord.Color.red()
+        )
+        m_reminder_complete.add_field(name="Task :", value=task, inline=False)
+        m_reminder_complete.set_footer(text='powered by : Agness')
+        return m_reminder_set, m_reminder_complete
+    else:
+        reminder_set = discord.Embed(
+            title='Reminder',
+            description=f"Hey {p_user}, I'll keep ur reminder in mind. {' ' * 10}",
+            colour=discord.Color.blurple()
+        )
+        reminder_set.add_field(name="Reminder for :", value=task, inline=False)
+        reminder_set.add_field(name="Time :", value=f"{time} {unit} remaining...", inline=False)
+        reminder_set.set_footer(text='powered by : Agness')
+
+        reminder_complete = discord.Embed(
+            title="It's your reminder...",
+            description=f"Hey {p_user}, Remember you told me to remind you for ur task.{' ' * 5}",
+            colour=discord.Color.red()
+        )
+        reminder_complete.add_field(name="Task :", value=task, inline=False)
+        reminder_complete.set_footer(text='powered by : Agness')
+
+        return reminder_set, reminder_complete
+
+
 @bot.command(aliases=['remind', 'set_reminder'])
-async def remind_me(ctx, task, time, unit='min', *meta):
-    reminder_set = discord.Embed(
-        title='Reminder',
-        description=f"Hey {str(ctx.author).split('#')[0]}, I'll keep ur reminder in mind. {' ' * 10}",
-        colour=discord.Color.blurple()
-    )
-    reminder_set.add_field(name="Reminder for :", value=task, inline=False)
-    reminder_set.add_field(name="Time :", value=f"{time} {unit} remaining...", inline=False)
-    reminder_set.set_footer(text='powered by : Agness')
-
-    reminder_complete = discord.Embed(
-        title="It's your reminder...",
-        description=f"Hey {str(ctx.author).split('#')[0]}, Remember you told me to remind you for ur task.{' ' * 5}",
-        colour=discord.Color.red()
-    )
-    reminder_complete.add_field(name="Task :", value=task, inline=False)
-    reminder_complete.set_footer(text='powered by : Agness')
-
+async def remind_me(ctx, task, time, unit='min', s_user=None):
+    print(ctx, task, time, unit, s_user)
+    p_user = str(ctx.author).split('#')[0]
+    r_set, r_complete = get_reminder_embeds(p_user, s_user, task, time, unit)
     try:
         seconds = int(calculate_time(int(time), str(unit).lower()))
-        print(seconds)
-        await ctx.send(ctx.author.mention, embed=reminder_set)
+        await ctx.send(ctx.author.mention, embed=r_set)
 
         await asyncio.sleep(seconds)
-
-        await ctx.send(ctx.author.mention, embed=reminder_complete)
+        if s_user:
+            await ctx.send(f"{s_user}, {ctx.author.mention}", embed=r_complete)
+        else:
+            await ctx.send(f"{ctx.author.mention}", embed=r_complete)
 
     except:
         await ctx.send(f'Something is not as what i expected...🤔... Unable to set reminder.'
