@@ -255,9 +255,9 @@ async def unshhh(ctx):
     await ctx.send(embed=unmuted)
 
 
-def get_reminder_embeds(p_user, s_user, task, time, unit):
-    print()
-    if s_user and str(s_user).startswith('<@!'):
+def get_reminder_embeds(p_user, s_user, task, time, unit, type_='individual'):
+
+    if type_ == 'mutual':
         m_reminder_set = discord.Embed(
             title='Mutual Reminder',
             description=f"Hey {p_user}, you've set a reminder for {s_user}."
@@ -300,10 +300,22 @@ def get_reminder_embeds(p_user, s_user, task, time, unit):
 
 @bot.command(aliases=['remind', 'set_reminder'])
 async def remind_me(ctx, task, time, unit='min', s_user=None):
+
     print(ctx, task, time, unit, s_user)
     p_user = str(ctx.author).split('#')[0]
-    r_set, r_complete = get_reminder_embeds(p_user, s_user, task, time, unit)
     try:
+        int(time)
+    except:
+        ctx.send('Time should be integer number')
+
+    if s_user and str(s_user).startswith('<'):
+
+        r_set, r_complete = get_reminder_embeds(p_user, s_user, task, time, unit, type_='mutual')
+    else:
+        r_set, r_complete = get_reminder_embeds(p_user, s_user, task, time, unit)
+    try:
+        assert len(unit.split()) == 1
+
         seconds = int(calculate_time(int(time), str(unit).lower()))
         await ctx.send(ctx.author.mention, embed=r_set)
 
