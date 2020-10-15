@@ -7,6 +7,8 @@ from response import Respond
 
 respond_to_user = Respond()
 
+CHANNEL_MUTE = False
+
 
 def write_command(ctx):
     with open('missed_commands.txt', 'a') as file:
@@ -14,12 +16,14 @@ def write_command(ctx):
 
 
 def calculate_time(time_, unit):
-    if unit in ['hr', 'hour', 'hours']:
+    if unit in ['hr', 'hour', 'hours', 'h']:
         return time_ * 3600
     elif unit in ['mins', 'min', 'minute', 'minutes', 'm']:
         return time_ * 60
     elif unit in ['sec', 'seconds', 'secs', 's']:
         return time_
+    elif unit in ['days', 'day', 'd']:
+        return time_ * 86400
     else:
         return False
 
@@ -213,6 +217,7 @@ async def unmute(ctx, member: discord.Member):
 @commands.has_role('Staff')
 @bot.command(aliases=['silence!'])
 async def shhh(ctx, *, time='5', unit='min'):
+    global CHANNEL_MUTE
     seconds = calculate_time(int(time), unit.lower())
     muted = discord.Embed(
         title='Silence! 🤫',
@@ -229,14 +234,16 @@ async def shhh(ctx, *, time='5', unit='min'):
 
     await ctx.send(embed=muted)
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
+    CHANNEL_MUTE = True
     await asyncio.sleep(seconds)
-    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
-    await ctx.send(embed=unmuted)
-
+    if CHANNEL_MUTE:
+        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+        await ctx.send(embed=unmuted)
 
 @commands.has_role('Staff')
 @bot.command(aliases=['rm_silence!'])
 async def unshhh(ctx):
+    global CHANNEL_MUTE
     unmuted = discord.Embed(
         description=f"Silence removed! You can send messages now. ☑",
         colour=discord.Color.green()
@@ -244,6 +251,7 @@ async def unshhh(ctx):
     unmuted.set_footer(text='UnMuted by : Administrator')
 
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
+    CHANNEL_MUTE = False
     await ctx.send(embed=unmuted)
 
 
@@ -354,6 +362,7 @@ async def unban(ctx, *, member):
 async def invite(ctx):
     link = await ctx.channel.create_invite(max_age=0)
     await ctx.send(link)
+
 
 
 bot.run(BOT_TOKEN)
