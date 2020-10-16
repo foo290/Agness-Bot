@@ -40,6 +40,7 @@ talk_agness = False
 
 @bot.event
 async def on_ready():
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Spotify"))
     print('Bot is ready')
 
 
