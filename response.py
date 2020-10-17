@@ -63,6 +63,12 @@ class Respond:
             ],
             '_nailpolish': [
                 'nail polish', 'nailpolish', 'next clr', 'next color', 'nail paint', 'nailpaint'
+            ],
+            '_thanks': [
+                'thank you', 'thanks agness', 'thanks'
+            ],
+            '_songs': [
+                'can u sing', 'can u sing a song', 'sing a song','sing me a song'
             ]
 
         }
@@ -72,6 +78,29 @@ class Respond:
                 'Heyyyy there! My name is Agness...Do you also think the admin is stupid or its just me ... 🤔 ',
                 'Hi, I am agness, a discord bot. 😀',
                 'Sup fam! i am agness ✌_😗',
+            ],
+            '_thanks': [
+                "you're welcome :)", 'Npp :)', ';)'
+            ],
+            '_songs': [
+                """🎼 🎶 One bad bitch, and she do what I say so 🎶🥁\n
+                Two big .40s and a big ass Draco 🎶 🎼\n
+                Three more millions when you ask how my day go\n
+                Poured up a 4, now that's blueberry Faygo""",
+
+                """Bed, stay in bed
+                    The feeling of your skin locked in my head 🎶 🎵
+                    Smoke smoke me broke 🎼 🎸
+                    I don't care, I'm down for what you want🎶 
+                    Day drunk into the night, 🎵 wanna keep you here
+                    'Cause you dry my tears🎵
+                    Yeah, summer loving and fights🎸
+                    How it is for us, and it's all because
+                    Now if we're talking body🎶 🎵
+                    You got a perfect one, so put it on me
+                    Swear it won't take you long🎶 🎵
+                    If you love me right
+                    We fuck for life, on and on and on...🎶 🎵"""
             ],
             '_nailpolish': [
                 'Luxe ✌_😗 💅', 'baby pink 💅', 'cotton candy 👌💅',

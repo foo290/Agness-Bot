@@ -241,6 +241,7 @@ async def shhh(ctx, *, time='5', unit='min'):
         await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
         await ctx.send(embed=unmuted)
 
+
 @commands.has_role('Staff')
 @bot.command(aliases=['rm_silence!'])
 async def unshhh(ctx):
@@ -257,7 +258,6 @@ async def unshhh(ctx):
 
 
 def get_reminder_embeds(p_user, s_user, task, time, unit, type_='individual'):
-
     if type_ == 'mutual':
         m_reminder_set = discord.Embed(
             title='Mutual Reminder',
@@ -301,7 +301,6 @@ def get_reminder_embeds(p_user, s_user, task, time, unit, type_='individual'):
 
 @bot.command(aliases=['remind', 'set_reminder'])
 async def remind_me(ctx, task, time, unit='min', s_user=None):
-
     print(ctx, task, time, unit, s_user)
     p_user = str(ctx.author).split('#')[0]
     try:
@@ -335,6 +334,7 @@ async def remind_me(ctx, task, time, unit='min', s_user=None):
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def ban(ctx, member: discord.Member, reason=None):
+    print(member)
     # try:
     banembed = discord.Embed(
         title='Ban User ❌ ',
@@ -346,35 +346,44 @@ async def ban(ctx, member: discord.Member, reason=None):
     await ctx.send(embed=banembed)
 
 
+
+async def send_unban(ctx, user):
+    unbanembed = discord.Embed(
+        title='Unban User ✅',
+        description=f"{user.mention} is unbanned and allowed to interact.",
+        colour=discord.Color.green()
+    )
+    unbanembed.set_footer(text='powered by : Agness')
+    await ctx.send(embed=unbanembed)
+    return
+
+
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def unban(ctx, *, member):
     banned_users = await ctx.guild.bans()
-    user_dis = member
-    print('beep')
+    user_dis = int(member)
 
     for banned_entry in banned_users:
         user = banned_entry.user
-        if user.discriminator == user_dis:
+        if user.id == user_dis:
+            print('boo')
             await ctx.guild.unban(user)
-            print(banned_entry)
-            unbanembed = discord.Embed(
-                title='Unban User ✅',
-                description=f"{user.mention} is unbanned and allowed to interact.",
-                colour=discord.Color.green()
-            )
-            unbanembed.set_footer(text='powered by : Agness')
-
-            await ctx.send(embed=unbanembed)
-            return
+            await send_unban(ctx, user)
+            print('beep')
         else:
-            print('not found')
+            await ctx.send(f'🤖 User not found with give id : {user_dis}')
+            return
+    else:
+        await ctx.send(f'🤖 User not found with give id : {user_dis}')
+        return
 
 
 @bot.command()
 async def invite(ctx):
     link = await ctx.channel.create_invite(max_age=0)
     await ctx.send(link)
+
 
 
 
