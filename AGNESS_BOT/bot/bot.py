@@ -7,8 +7,8 @@ from AGNESS_BOT.global_configs import DEFAULT_ROLE
 
 PREFIX = '.'
 OWNER_IDS = [734861106698387548]
-BOT_TOKEN = os.environ.get('AMADEUS_BOT_TOKEN')
-COGS = [cog.split('\\')[-1][:-3] for cog in glob('./cogs/*.py')]
+BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
+COGS = [cog.split('\\')[-1][:-3] for cog in glob('~/AGNESS_BOT/cogs/*.py')]
 
 
 class Bot(basebot):
