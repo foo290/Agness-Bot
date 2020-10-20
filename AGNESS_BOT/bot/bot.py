@@ -3,12 +3,14 @@ import os
 import discord
 from glob import glob
 from AGNESS_BOT.global_configs import DEFAULT_ROLE
-
+from ..cogs import admin_cmds
 
 PREFIX = '.'
 OWNER_IDS = [734861106698387548]
 BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
-COGS = [cog.split('\\')[-1][:-3] for cog in glob('~/AGNESS_BOT/cogs/*.py')]
+COGS = [cog.split('\\')[-1][:-3] for cog in glob('./cogs/*.py')]
+COGS.remove('__init__')
+
 
 
 class Bot(basebot):
@@ -25,6 +27,7 @@ class Bot(basebot):
 
     def setup(self):
         for cog in self.botcogs:
+            print(f'{cog}----------------------')
             self.load_extension(f"cogs.{cog}")
 
     async def on_connect(self):
