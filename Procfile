@@ -1,1 +1,1 @@
-worker: python bot.py
+worker: python AGNESS_BOT/main.py
