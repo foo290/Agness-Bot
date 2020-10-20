@@ -9,8 +9,10 @@ PREFIX = '.'
 OWNER_IDS = [734861106698387548]
 BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
 COGS = [cog.split('\\')[-1][:-3] for cog in glob('./cogs/*.py')]
-COGS.remove('__init__')
-
+try:
+    COGS.remove('__init__')
+except:
+    pass
 
 
 class Bot(basebot):
