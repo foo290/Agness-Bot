@@ -7,7 +7,7 @@ from AGNESS_BOT.global_configs import DEFAULT_ROLE
 PREFIX = '.'
 OWNER_IDS = [734861106698387548]
 BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
-COGS = [cog.split('\\')[-1][:-3] for cog in glob('~/AGNESS_BOT/bot/cogs/*.py')]
+COGS = [cog.split('/')[-1][:-3] for cog in glob('./bot/cogs/*.py')]
 
 
 
