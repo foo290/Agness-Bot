@@ -88,7 +88,8 @@ class GoogleWebCrawler:
                 try:
                     self.source = requests.get(f'https://www.google.com/search?q={self.query}').text
                     self.soup = bs(self.source, 'lxml')
-                    self.level1 = self.soup.find('div', id='main')
+                    self.level1 = self.soup.find('div', id='Main')
+                    print(self.level1)
                 except Exception as error:
                     if str(error).split(':')[-2].strip() == 'Failed to establish a new connection':
                         self.connection_status = 0
@@ -112,8 +113,8 @@ class GoogleWebCrawler:
         if not self.cached_data:
             if self.connection_status:
 
-                shortsum = self.level1.find('div', class_='BNeawe s3v9rd AP7Wnd').text
-                self.query_shortsummary[self.query] = shortsum
+                # shortsum = self.level1.find('div', class_='BNeawe s3v9rd AP7Wnd').text
+                # self.query_shortsummary[self.query] = shortsum
                 r = results
                 for parsed_content in self.soup.find_all('div', class_='ZINbbc xpd O9g5cc uUPGi'):
                     try:
