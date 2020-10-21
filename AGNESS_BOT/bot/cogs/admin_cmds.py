@@ -1,8 +1,9 @@
 from discord.ext import commands
 import discord
 from AGNESS_BOT.utils.time_utils import calculate_time
+from AGNESS_BOT.utils.embeds_utils import custom_help_cmd
 import asyncio
-from AGNESS_BOT.global_configs import ADMIN_ROLE
+from AGNESS_BOT.settings import ADMIN_ROLE, BOT_NAME
 
 CHANNEL_MUTE = False
 
@@ -10,11 +11,6 @@ CHANNEL_MUTE = False
 class Admin(commands.Cog):
     def __init__(self, client):
         self.client = client
-
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        print('cogs')
 
     @commands.has_role(ADMIN_ROLE)
     @commands.command()
@@ -25,7 +21,7 @@ class Admin(commands.Cog):
             description=f"Permanent Ban Applied 👌 to {member.id}",
             colour=discord.Color.dark_red()
         )
-        banembed.set_footer(text='powered by : Agness')
+        banembed.set_footer(text=f'powered by : {BOT_NAME}')
         await member.ban(reason=reason)
         await ctx.send(embed=banembed)
 
@@ -35,7 +31,7 @@ class Admin(commands.Cog):
             description=f"{user.mention} is unbanned and allowed to interact.",
             colour=discord.Color.green()
         )
-        unbanembed.set_footer(text='powered by : Agness')
+        unbanembed.set_footer(text=f'powered by : {BOT_NAME}')
         await ctx.send(embed=unbanembed)
         return
 
@@ -56,8 +52,8 @@ class Admin(commands.Cog):
             return
 
     @commands.has_role(ADMIN_ROLE)
-    @commands.command(aliases=['silence!'])
-    async def shhh(self, ctx, *, time='5', unit='min'):
+    @commands.command(aliases=['silence'])
+    async def shh(self, ctx, *, time='5', unit='min'):
         global CHANNEL_MUTE
         seconds = calculate_time(int(time), unit.lower())
         muted = discord.Embed(
@@ -82,8 +78,8 @@ class Admin(commands.Cog):
             await ctx.send(embed=unmuted)
 
     @commands.has_role(ADMIN_ROLE)
-    @commands.command(aliases=['rm_silence!'])
-    async def unshhh(self, ctx):
+    @commands.command(aliases=['rm_silence'])
+    async def unshh(self, ctx):
         global CHANNEL_MUTE
         unmuted = discord.Embed(
             description=f"Silence removed! You can send messages now. ☑",
@@ -96,37 +92,9 @@ class Admin(commands.Cog):
         await ctx.send(embed=unmuted)
 
     @commands.has_role(ADMIN_ROLE)
-    @commands.command(aliases=['loadcog'])
-    async def load_exts(self, ctx, extension):
-        print('loading ext...')
-        self.client.load_extension(f"cogs.{extension}")
-        print('ext loaded.')
-
-    @commands.has_role(ADMIN_ROLE)
-    @commands.command(aliases=['unloadcog'])
-    async def unload_exts(self, ctx, extension):
-        print('loading ext...')
-        self.client.unload_extension(f"cogs.{extension}")
-        print('ext loaded.')
-
-    @commands.has_role(ADMIN_ROLE)
-    @commands.command(aliases=['reloadcog'])
-    async def reload_exts(self, ctx):
-        await ctx.send('Reloading cogs...')
-        for cog in self.client.botcogs:
-            try:
-                self.client.unload_extension(f"cogs.{cog}")
-            except:
-                print(f'{cog} does not exist')
-                pass
-
-        for cogs in self.client.botcogs:
-            self.client.load_extension(f"cogs.{cogs}")
-
-        await ctx.send('COGs Loaded!')
-
-
-
+    @commands.command(aliases=['hgb'])
+    async def help_global(self, ctx):
+        await ctx.send(embed=custom_help_cmd('global_help', client=self.client))
 
 
 def setup(client):

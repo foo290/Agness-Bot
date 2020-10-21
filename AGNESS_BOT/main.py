@@ -1,6 +1,13 @@
 from AGNESS_BOT.bot import bot
-from AGNESS_BOT.global_configs import HOT_WORD
+from AGNESS_BOT.settings import (
+    HOT_WORD,
+    DEFAULT_ROLE,
+    ADMIN_ROLE,
+    COGS
+)
 from AGNESS_BOT.user_interaction.response import Respond
+from discord.ext import commands
+from AGNESS_BOT.utils.embeds_utils import custom_help_cmd
 
 respond_to_user = Respond()
 
@@ -29,7 +36,6 @@ def check_active_users(l):
 @bot.listen('on_message')
 async def on_message(message):
     global TALK_AGNESS, active_chat
-    print(active_chat)
     msg = str(message.content).lower()
     author = message.author.discriminator
     nickname = str(message.author).split("#")[0]
@@ -52,7 +58,7 @@ async def on_message(message):
                         pass  # Missed Talks
         else:
             if check_hotword(msg, author,
-                                  message):  # If user is not in active chat with agness but msg is hot word
+                             message):  # If user is not in active chat with agness but msg is hot word
                 await message.channel.send(f'Hellow {nickname}')
     else:
         if check_hotword(msg, author, message):
@@ -63,6 +69,64 @@ async def on_message(message):
                 await message.channel.send('Good Morning 🥰')
             elif msg in ['gn', 'good night agness', 'good night']:
                 await message.channel.send('Good Night 🥰')
+
+
+@commands.has_role(DEFAULT_ROLE)
+@bot.command(aliases=['h', 'hlp'])
+async def help(ctx):
+    author = ctx.message.author
+    author_roles = [role.name for role in author.roles]
+    if 'Admin' in author_roles:
+        cmds, aliases = custom_help_cmd('admin')
+        await ctx.send(embed=cmds)
+        await ctx.send(embed=aliases)
+    elif 'Staff' in author_roles:
+        cmds, aliases = custom_help_cmd('staff')
+        await ctx.send(embed=cmds)
+        await ctx.send(embed=aliases)
+    elif 'Member' in author_roles:
+        cmds, aliases = custom_help_cmd('member')
+        await ctx.send(embed=cmds)
+        await ctx.send(embed=aliases)
+    else:
+        pass
+
+
+@commands.has_role(ADMIN_ROLE)
+@bot.command(aliases=['lcog'])
+async def load_exts(ctx, *, extension):
+    await ctx.send(f'Cog : {extension}    Loading...')
+    try:
+        bot.load_extension(f'AGNESS_BOT.bot.cogs.{extension}')
+        await ctx.send(f'Cog : {extension}    Loaded Successfully!')
+    except:
+        await ctx.send(f'Cog : {extension}    Load Failed! ❌')
+
+
+@commands.has_role(ADMIN_ROLE)
+@bot.command(aliases=['ulcog'])
+async def unload_exts(ctx, *, extension):
+    await ctx.send(f'Cog : {extension}    UnLoading...')
+    try:
+        bot.unload_extension(f'AGNESS_BOT.bot.cogs.{extension}')
+        await ctx.send(f'Cog : {extension}    UnLoaded Successfully!')
+    except:
+        await ctx.send(f'Cog : {extension}    UnLoad Failed! ❌')
+
+
+@commands.has_role(ADMIN_ROLE)
+@bot.command(aliases=['rlcog'])
+async def reload_exts(ctx):
+    await ctx.send('Reloading cogs...')
+    for cog in COGS:
+        try:
+            bot.unload_extension(f'AGNESS_BOT.bot.cogs.{cog}')
+        except:
+            print(f'{cog} does not exist')
+            pass
+    for cogs in bot.botcogs:
+        bot.load_extension(f'AGNESS_BOT.bot.cogs.{cogs}')
+    await ctx.send('COGs Loaded!')
 
 
 bot.run()

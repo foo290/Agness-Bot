@@ -3,7 +3,7 @@ import asyncio
 from AGNESS_BOT.utils.embeds_utils import get_reminder_embeds
 from AGNESS_BOT.utils.time_utils import calculate_time
 from AGNESS_BOT.utils.web_crawlers import GoogleWebCrawler
-from AGNESS_BOT.global_configs import DEFAULT_ROLE
+from AGNESS_BOT.settings import DEFAULT_ROLE
 
 
 class Members(commands.Cog):
