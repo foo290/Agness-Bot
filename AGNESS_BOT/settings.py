@@ -4,7 +4,7 @@ import os
 BOT_NAME = 'Agness'
 
 # Command Prefix that will be used for invoking the commands.
-COMMAND_PREFIX = '!'
+COMMAND_PREFIX = '.'
 
 # Your bot token data_type : int
 BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
