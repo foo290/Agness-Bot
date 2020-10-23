@@ -1,5 +1,5 @@
 import discord
-from ..settings import COMMAND_PREFIX, BOT_NAME
+from AGNESS_BOT.settings import COMMAND_PREFIX, BOT_NAME
 import datetime as dt
 
 

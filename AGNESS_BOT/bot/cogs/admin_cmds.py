@@ -1,9 +1,9 @@
 from discord.ext import commands
 import discord
-from ...utils.time_utils import calculate_time
-from ...utils.embeds_utils import custom_help_cmd
+from AGNESS_BOT.utils.time_utils import calculate_time
+from AGNESS_BOT.utils.embeds_utils import custom_help_cmd
 import asyncio
-from ...settings import ADMIN_ROLE, BOT_NAME
+from AGNESS_BOT.settings import ADMIN_ROLE, BOT_NAME
 
 CHANNEL_MUTE = False
 

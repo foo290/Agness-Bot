@@ -1,13 +1,13 @@
-from bot import bot
-from .settings import (
+from AGNESS_BOT.bot import bot
+from AGNESS_BOT.settings import (
     HOT_WORD,
     DEFAULT_ROLE,
     ADMIN_ROLE,
     COGS
 )
-from user_interaction.response import Respond
+from AGNESS_BOT.user_interaction.response import Respond
 from discord.ext import commands
-from utils.embeds_utils import custom_help_cmd
+from AGNESS_BOT.utils.embeds_utils import custom_help_cmd
 
 respond_to_user = Respond()
 

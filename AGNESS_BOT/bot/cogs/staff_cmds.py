@@ -1,8 +1,8 @@
 from discord.ext import commands
 import discord
 import asyncio
-from ...utils.time_utils import calculate_time
-from ...settings import STAFF_ROLE, BOT_NAME
+from AGNESS_BOT.utils.time_utils import calculate_time
+from AGNESS_BOT.settings import STAFF_ROLE, BOT_NAME
 
 
 class Staff(commands.Cog):
