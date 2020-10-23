@@ -4,7 +4,7 @@ from AGNESS_BOT.utils.embeds_utils import get_reminder_embeds
 from AGNESS_BOT.utils.time_utils import calculate_time
 from AGNESS_BOT.utils.web_crawlers import GoogleWebCrawler
 from AGNESS_BOT.settings import DEFAULT_ROLE
-
+import discord
 
 class Members(commands.Cog):
     def __init__(self, client):
@@ -76,6 +76,15 @@ class Members(commands.Cog):
         await ctx.send(
             f"{c}"
         )
+
+    @commands.command()
+    async def test_embedd(self, ctx):
+        e = discord.Embed(description='Song name goes here')
+
+        e.set_image(url="https://i.pinimg.com/originals/64/53/24/645324641a0555cc55cea87787fc0bcb.gif")
+        # e.add_field(name='Now Playing...', value='Some thing a bit long string here so i can see it correctly', inline=False)
+        e.set_footer(text='some footer text')
+        await ctx.send(embed=e)
 
 
 def setup(client):

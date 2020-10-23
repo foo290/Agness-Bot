@@ -3,6 +3,8 @@ import os
 # Name of the bot that will be visible on footers of embeds
 BOT_NAME = 'Agness'
 
+HOT_WORD = 'hey agness'
+
 # Command Prefix that will be used for invoking the commands.
 COMMAND_PREFIX = '.'
 
@@ -16,7 +18,7 @@ OWNER_IDS = {
 }
 
 # Set this var to True if you want to receive the dm by bot at all.
-SEND_DM = False
+SEND_DM = True
 
 # A list or tup containing IDs of the users that will be used to send DMs for bot events. Ex: bot is ready.
 SEND_DM_TO = OWNER_IDS['Nitin'],
@@ -32,6 +34,7 @@ COGS = [
     'dm_cmds',
     'members_cmds',
     'staff_cmds',
+    'musiccog',
 ]
 
 # These names will be used to sort commands based on roles. For example if your Admin has a different name "Hokagye",
@@ -41,5 +44,29 @@ ADMIN_ROLE = 'Admin'
 STAFF_ROLE = 'Staff'
 DEFAULT_ROLE = 'Member'
 
-HOT_WORD = 'hey agness'
+COMMAND_ALIASES = {
+    'help': [
+        'h', 'hlp', 'help'
+    ],
+}
 
+# Music Player Configs : Powered by - Wavelink and Lavalink
+MUSIC_HOST = 'lava-link-server.herokuapp.com'
+MUSIC_PORT = 80
+REST_URI = 'http://lava-link-server.herokuapp.com'
+MUSIC_SERVER_PW = 'serverserveserverdata'
+MUSIC_SERVER_REGION = 'na'
+
+MUSIC_SEARCH_ENGINE = 'soundcloud'
+
+# Volume range is upto 0-1000. Default volume is set for smooth hearing.
+# Volume above 100 can be very noisy and creepy.
+DEFAULT_VOLUME = 80
+MAX_VOLUME = 100
+
+# In Seconds : >> After given seconds the bot will leave the voice channel if no member is present.
+BOT_LEAVE_CHANNEL_DELAY = 10  # Seconds
+
+# A delay timer to keep pinging server to avoid ideal server timeout.
+# It should be less than 50 as server timeout on heroku is 55 seconds.
+KEEP_ALIVE_DELAY = 40  # SECONDS

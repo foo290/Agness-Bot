@@ -31,7 +31,6 @@ class Bot(basebot):
         super().__init__(command_prefix=self.prefix, owner_ids=OWNER_IDS)
 
     def run(self):
-        self.setup()
         super().run(self.token, reconnect=True)
 
     def setup(self):
@@ -39,9 +38,9 @@ class Bot(basebot):
         for cog in self.botcogs:
             try:
                 self.load_extension(f'AGNESS_BOT.bot.cogs.{cog}')
-                print(f'AGNESS_BOT.bot.cogs.{cog} Loaded.   OK!')
+                print(f'OK!    AGNESS_BOT.bot.cogs.{cog} Loaded.')
             except:
-                print(f'AGNESS_BOT.bot.cogs.{cog} NOT FOUND!')
+                print(f'NOT FOUND!    AGNESS_BOT.bot.cogs.{cog}')
         print('COGs Loaded------------------------------------------\n')
 
 
@@ -52,9 +51,9 @@ class Bot(basebot):
                 assert isinstance(dmuser, int)
                 owner = self.get_user(dmuser)
                 await owner.send('Bot is connected!')
-            print('Bot is connected     OK!')
+            print('OK!    Bot is connected')
         else:
-            print('Bot is connected     OK!')
+            print('OK!    Bot is connected')
 
     async def on_command_error(self, context, exception):
         if isinstance(exception,commands.MissingRole):
@@ -64,7 +63,10 @@ class Bot(basebot):
         elif isinstance(exception, commands.MissingRequiredArgument):
             await context.send(exception)
         else:
-            raise exception
+            raise getattr(exception, "original", exception)
+
+    async def on_error(self, event_method, *args, **kwargs):
+        raise
 
     async def on_disconnect(self):
         if self.send_dm and self.on_disconnect_dm:
@@ -86,6 +88,7 @@ class Bot(basebot):
 
         if not self.ready:
             self.ready = True
+            self.setup()
             if self.send_dm and self.on_ready_dm:
                 for dmuser in self.dm_users:
                     assert isinstance(dmuser, int)

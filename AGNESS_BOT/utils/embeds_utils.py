@@ -1,5 +1,84 @@
 import discord
 from AGNESS_BOT.settings import COMMAND_PREFIX, BOT_NAME
+import datetime as dt
+
+
+class MusicEmbeds:
+    def __init__(self):
+        pass
+
+    def show_state(self, state):
+        embed = discord.Embed(
+            description=state,
+        )
+        return embed
+
+    def choose_track_embed(self, ctx, tracks, show_limit=5):
+        embed = discord.Embed(
+            title='Choose a song by clicking on reactions below.',
+            description=(
+                "\n\n".join(
+                    f"**{i + 1}.** {_t.title} ({_t.length // 60000}:{str(_t.length % 60).zfill(2)})"
+                    for i, _t in enumerate(tracks[:show_limit]
+                                           )
+                )
+            ),
+            color=ctx.author.color,
+            timestamp=dt.datetime.utcnow()
+        )
+        embed.set_author(name='Songs Found!  🎼')
+        embed.set_footer(text=f'Invoked by {ctx.author.display_name}', icon_url=ctx.author.avatar_url)
+
+        return embed
+
+    def show_playlist(self, all_songs, currently_playing, upcoming_songs, showlimit, **kwargs):
+        embed = discord.Embed(
+            title=f'Song Queue...  🎧',
+            description=f'Showing up to next {showlimit} tracks',
+            colour=kwargs['color'],
+            timestamp=dt.datetime.utcnow()
+        )
+        embed.set_author(name="")
+        embed.add_field(name='All Songs  🎶',
+                        value=all_songs,
+                        inline=False)
+        embed.set_footer(
+            text=f"Requested by {kwargs['requester']}",
+            icon_url=kwargs['requester_icon']
+        )
+        embed.add_field(
+            name="Currently playing ",
+            value=f"{currently_playing}\n",
+            inline=False
+        )
+        if upcoming_songs:
+            embed.add_field(
+                name="Coming Up Next! ",
+                value="\n\n".join(f"📍    {_t.title}" for _t in upcoming_songs[:showlimit]),
+                inline=False
+            )
+
+        return embed
+
+    def now_playing(self, track, display_name, icon, clr):
+        embed = discord.Embed(
+            description=f"🔊 {track}",
+            color=clr
+        )
+        embed.set_image(url="https://i.pinimg.com/originals/64/53/24/645324641a0555cc55cea87787fc0bcb.gif")
+        embed.set_author(name="Now Playing 🎵 . . .")
+        embed.set_footer(text=f'Requested by {display_name}', icon_url=icon)
+        return embed
+
+    def initial_connected(self, display_name, chanel_name, icon, clr):
+        embed = discord.Embed(
+            description='Bot has joined the channel. You can use music commands now.',
+            color=clr
+        )
+        embed.set_image(url='https://i.gifer.com/7d20.gif')
+        embed.set_author(name=f"Connected to the {chanel_name} Successfully.")
+        embed.set_footer(text=f'Requested by : {display_name}', icon_url=icon)
+        return embed
 
 
 def get_reminder_embeds(p_user, s_user, task, time, unit, type_='individual'):
