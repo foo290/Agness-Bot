@@ -1,15 +1,15 @@
 import os
 
 # Name of the bot that will be visible on footers of embeds
-BOT_NAME = 'Amadeus'
+BOT_NAME = 'Agness'
 
 HOT_WORD = 'hey agness'
 
 # Command Prefix that will be used for invoking the commands.
-COMMAND_PREFIX = '!'
+COMMAND_PREFIX = '.'
 
 # Your bot token data_type : int
-BOT_TOKEN = os.environ.get('AMADEUS_BOT_TOKEN')
+BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
 
 # A dict of owner names and their IDs. Name key is just for ease of differentiate for user, bot just user value by
 # list(OWNER_IDS.values()).
