@@ -1,15 +1,15 @@
 import os
 
 # Name of the bot that will be visible on footers of embeds
-BOT_NAME = 'Agness'
+BOT_NAME = 'Amadeus'
 
 HOT_WORD = 'hey agness'
 
 # Command Prefix that will be used for invoking the commands.
-COMMAND_PREFIX = '.'
+COMMAND_PREFIX = '!'
 
 # Your bot token data_type : int
-BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
+BOT_TOKEN = os.environ.get('AMADEUS_BOT_TOKEN')
 
 # A dict of owner names and their IDs. Name key is just for ease of differentiate for user, bot just user value by
 # list(OWNER_IDS.values()).
@@ -51,9 +51,12 @@ COMMAND_ALIASES = {
 }
 
 # Music Player Configs : Powered by - Wavelink and Lavalink
-MUSIC_HOST = 'lava-link-server.herokuapp.com'
+MUSIC_HOST = 'lava-link-server.herokuapp.com'  # '127.0.0.1'
+# MUSIC_HOST = '127.0.0.1'
 MUSIC_PORT = 80
+# MUSIC_PORT = 2333
 REST_URI = 'http://lava-link-server.herokuapp.com'
+# REST_URI = 'http://127.0.0.1:2333'
 MUSIC_SERVER_PW = 'serverserveserverdata'
 MUSIC_SERVER_REGION = 'na'
 

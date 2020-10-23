@@ -16,7 +16,6 @@ from AGNESS_BOT.settings import (
 
 OWNER_IDS = list(OWNER_IDS.values())
 
-
 class Bot(basebot):
     def __init__(self):
         self.prefix = COMMAND_PREFIX
@@ -46,14 +45,7 @@ class Bot(basebot):
 
     async def on_connect(self):
         print('Connecting...')
-        if self.send_dm and self.on_connect_dm:
-            for dmuser in self.dm_users:
-                assert isinstance(dmuser, int)
-                owner = self.get_user(dmuser)
-                await owner.send('Bot is connected!')
-            print('OK!    Bot is connected')
-        else:
-            print('OK!    Bot is connected')
+        print('OK!    Bot is connected')
 
     async def on_command_error(self, context, exception):
         if isinstance(exception,commands.MissingRole):
@@ -69,14 +61,8 @@ class Bot(basebot):
         raise
 
     async def on_disconnect(self):
-        if self.send_dm and self.on_disconnect_dm:
-            for dmuser in self.dm_users:
-                assert isinstance(dmuser, int)
-                owner = self.get_user(dmuser)
-                await owner.send('Bot is disconnected...')
-            print('bot is disconnected...')
-        else:
-            print('bot is disconnected...')
+
+        print('bot is disconnected...')
 
     async def on_member_join(self, member):
         role = discord.utils.get(member.guild.roles, name=DEFAULT_ROLE)
