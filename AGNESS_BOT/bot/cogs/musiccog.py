@@ -6,8 +6,8 @@ import re
 import asyncio
 import enum
 from discord.ext import commands
-from AGNESS_BOT.utils.embeds_utils import MusicEmbeds
-from AGNESS_BOT.settings import (
+from ...utils.embeds_utils import MusicEmbeds
+from ...settings import (
     MUSIC_HOST,
     MUSIC_PORT,
     MUSIC_SERVER_PW,

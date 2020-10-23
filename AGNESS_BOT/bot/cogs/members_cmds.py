@@ -1,9 +1,9 @@
 from discord.ext import commands
 import asyncio
-from AGNESS_BOT.utils.embeds_utils import get_reminder_embeds
-from AGNESS_BOT.utils.time_utils import calculate_time
-from AGNESS_BOT.utils.web_crawlers import GoogleWebCrawler
-from AGNESS_BOT.settings import DEFAULT_ROLE
+from ...utils.embeds_utils import get_reminder_embeds
+from ...utils.time_utils import calculate_time
+from ...utils.web_crawlers import GoogleWebCrawler
+from ...settings import DEFAULT_ROLE
 import discord
 
 class Members(commands.Cog):

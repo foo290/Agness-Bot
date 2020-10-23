@@ -1,7 +1,7 @@
 from discord.ext.commands import Bot as basebot
 from discord.ext import commands
 import discord
-from AGNESS_BOT.settings import (
+from ..settings import (
     DEFAULT_ROLE,
     COMMAND_PREFIX,
     BOT_TOKEN,
