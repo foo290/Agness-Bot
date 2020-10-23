@@ -280,9 +280,12 @@ class Player(wavelink.Player):
 
     async def delete_now_playing_embed(self):
         if self.nowPlaying:
-            await self.nowPlaying.delete()
-            self.nowPlaying = None
-            return
+            try:
+                await self.nowPlaying.delete()
+                self.nowPlaying = None
+                return
+            except:
+                pass
         return
 
     async def show_now_playing_embed(self, ctx, track):
@@ -484,9 +487,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         """
         player = self.get_player(ctx)
         await ctx.send('Leaving...')
-        await player.delete_now_playing_embed()
         await player.teardown()
         await ctx.send('Disconnected!')
+        await player.delete_now_playing_embed()
         await self.remove_initial_connect_embed()
 
     def check_query_or_jump(self, q):
