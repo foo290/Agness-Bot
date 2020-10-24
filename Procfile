@@ -1,2 +1,2 @@
 worker: python AGNESS_BOT/main.py
-web: music_server/java -jar Lavalink.jar --server.port=$PORT
+web: java -jar music_server/Lavalink.jar --server.port=$PORT
