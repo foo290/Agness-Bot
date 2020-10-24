@@ -51,12 +51,12 @@ COMMAND_ALIASES = {
 }
 
 # Music Player Configs : Powered by - Wavelink and Lavalink
-# MUSIC_HOST = 'lava-link-server.herokuapp.com'  # '127.0.0.1'
-MUSIC_HOST = '127.0.0.1'
-# MUSIC_PORT = 80
-MUSIC_PORT = 2333
-# REST_URI = 'http://lava-link-server.herokuapp.com'
-REST_URI = 'http://127.0.0.1:2333'
+MUSIC_HOST = 'lava-link-server.herokuapp.com'  # '127.0.0.1'
+# MUSIC_HOST = '127.0.0.1'
+MUSIC_PORT = 80
+# MUSIC_PORT = 2333
+REST_URI = 'http://lava-link-server.herokuapp.com'
+# REST_URI = 'http://127.0.0.1:2333'
 MUSIC_SERVER_PW = 'serverserveserverdata'
 MUSIC_SERVER_REGION = 'na'
 
