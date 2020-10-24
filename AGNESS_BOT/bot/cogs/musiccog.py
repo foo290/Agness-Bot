@@ -17,13 +17,9 @@ from AGNESS_BOT.settings import (
     BOT_LEAVE_CHANNEL_DELAY,
     DEFAULT_VOLUME,
     MAX_VOLUME,
-    KEEP_ALIVE_DELAY
 )
 
 MUSIC_SEARCH_ENGINE = MUSIC_SEARCH_ENGINE.lower()
-
-KEEP_ALIVE = True
-
 
 OPTIONS = {
     "1️⃣": 0,
@@ -33,7 +29,7 @@ OPTIONS = {
     "5⃣": 4,
 }
 
-music_embads = MusicEmbeds()
+music_embeds = MusicEmbeds()
 
 URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 JUMP_REGEX = r"^([1-9]|10)$"
@@ -226,7 +222,7 @@ class Player(wavelink.Player):
                     and u == ctx.author and r.message.id == msg.id
             )
 
-        msg = await ctx.send(embed=music_embads.choose_track_embed(ctx, tracks, show_limit=5))
+        msg = await ctx.send(embed=music_embeds.choose_track_embed(ctx, tracks, show_limit=5))
 
         for emoji in list(OPTIONS.keys())[:min(len(tracks), len(OPTIONS))]:
             await msg.add_reaction(emoji)
@@ -289,7 +285,7 @@ class Player(wavelink.Player):
         return
 
     async def show_now_playing_embed(self, ctx, track):
-        now_playing = music_embads.now_playing(
+        now_playing = music_embeds.now_playing(
             track.title,
             ctx.author.display_name,
             ctx.author.avatar_url,
@@ -303,8 +299,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         self.bot = bot
         self.wavelink = wavelink.Client(bot=bot)
         self.bot.loop.create_task(self.start_nodes())
-        # self.wavelink.loop.create_task(self.start_nodes())
-
         self.initial_connect_embed = None
         self.current_volume = DEFAULT_VOLUME
         self.song_index = 0  # used to play songs directly by no. This variable should be managed manually.
@@ -334,7 +328,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player = self.get_player(ctx)
         channel = await player.connect(ctx, channel)
 
-        embed = music_embads.initial_connected(
+        embed = music_embeds.initial_connected(
             ctx.author.display_name,
             channel.name,
             ctx.author.avatar_url,
@@ -342,7 +336,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         )
         self.initial_connect_embed = await ctx.send(embed=embed)
         await player.set_volume(DEFAULT_VOLUME)
-        # await self.keep_server_alive()  # This function keeps pinging server to avoid ideal server timeout on heroku.
 
     # Error handling for connect command =============================================================================
     @connect_command.error
@@ -369,9 +362,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not member.bot and after.channel is None:
             if not [m for m in before.channel.members if not m.bot]:
                 await asyncio.sleep(BOT_LEAVE_CHANNEL_DELAY)  # After 10 seconds, bot will be removed
-                await self.get_player(member.guild).delete_now_playing_embed()
                 await self.remove_initial_connect_embed()
                 await self.get_player(member.guild).teardown()
+                await self.get_player(member.guild).delete_now_playing_embed()
 
     @wavelink.WavelinkMixin.listener('on_track_stuck')
     @wavelink.WavelinkMixin.listener('on_track_end')
@@ -393,21 +386,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send('Music commands are not allowed in DMs')
             return False
         return True
-
-    # async def keep_server_alive(self):
-    #     while KEEP_ALIVE:
-    #         print('KEEPING ALIVE !')
-    #         query = f'scsearch:Dynamite BTS{random.randint(10, 1000)}'
-    #         await asyncio.sleep(KEEP_ALIVE_DELAY)
-    #         await self.wavelink.get_tracks(query)
-    #     else:
-    #         return
-
-    # @commands.command(name='keep_alive')
-    # async def set_keep_alive_off(self, ctx, state):
-    #     global KEEP_ALIVE
-    #     KEEP_ALIVE = False if state.lower() == 'off' else True
-    #     await ctx.send('Keep Alive is set to ')
 
     @commands.command(name="volume", aliases=['vol', 'v'])
     async def set_player_volume(self, ctx, v: t.Optional[str]):
@@ -526,7 +504,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         else:  # Query Search
             if self.check_query_or_jump(query):  # Jump tracks by number (index)
                 self.song_index = int(query)
-                self
                 await player.stop()  # Gives control to >> on_player_stop()
             else:
                 query = query.strip("<>")  # search by link
@@ -551,10 +528,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         :return: None
         """
         player = self.get_player(ctx)
-        await player.delete_now_playing_embed()
         player.queue.empty()
         await player.stop()
         await ctx.send('Playback Stopped')
+        await player.delete_now_playing_embed()
 
     @commands.command(name='next', aliases=['skip', 'nxt', '+1'])
     async def next_command(self, ctx):
@@ -582,7 +559,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @commands.command(name='previous', aliases=['-1', 'prv'])
     async def previous_command(self, ctx):
         """
-        This function provides the functionality to paly the previous song in the playlist.
+        This function provides the functionality to play the previous song in the playlist.
         :param ctx: context
         :return: None
         """
@@ -676,7 +653,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         # Show Playlist
         await ctx.send(
-            embed=music_embads.show_playlist(
+            embed=music_embeds.show_playlist(
                 all_songs,
                 currently_playing,
                 upcoming_song,
@@ -693,7 +670,27 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send("The queue is currently empty.")
 
 
+class KeepAlive(commands.Cog, wavelink.WavelinkMixin):
+    def __init__(self): pass
+
+    async def start_nodes(self):
+        """
+        Main Node function which declares and initialize the node to connect to lava link server.
+        :return: None
+        """
+        nodes = {
+            "MAIN": {
+                "host": MUSIC_HOST,
+                "port": MUSIC_PORT,
+                "rest_uri": REST_URI,
+                "password": MUSIC_SERVER_PW,
+                "identifier": 'MAIN ',
+                "region": MUSIC_SERVER_REGION
+            }
+        }
+        for node in nodes.values():
+            await self.wavelink.initiate_node(**node)
+
+
 def setup(bot):
     bot.add_cog(Music(bot))
-
-
