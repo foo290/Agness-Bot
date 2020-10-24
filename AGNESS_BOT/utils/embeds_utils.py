@@ -1,5 +1,5 @@
 import discord
-from AGNESS_BOT.settings import COMMAND_PREFIX, BOT_NAME
+from AGNESS_BOT.settings import COMMAND_PREFIX, BOT_NAME, NOW_PLAYING_GIF_URL, INITIAL_CONNECT_GIF_URL
 import datetime as dt
 
 
@@ -11,6 +11,22 @@ class MusicEmbeds:
         embed = discord.Embed(
             description=state,
         )
+        return embed
+
+    def track_added(self, track, position, addedby, icon, color):
+        embed = discord.Embed(
+            title='Track Added! ✅ ',
+            description='A new track is added in queue... 🎧',
+            color=color,
+            timestamp=dt.datetime.utcnow()
+        )
+        embed.add_field(name='Track Name :', value=f"🎶 {track.title}", inline=False)
+        embed.add_field(name='Added at Position : ', value=position)
+        thumbnail = track.thumb
+        if thumbnail:
+            embed.set_thumbnail(url=thumbnail)
+        embed.set_footer(text=f"Added by : {addedby}", icon_url=icon)
+
         return embed
 
     def choose_track_embed(self, ctx, tracks, show_limit=5):
@@ -60,22 +76,26 @@ class MusicEmbeds:
 
         return embed
 
-    def now_playing(self, track, display_name, icon, clr):
+    def now_playing(self, track, display_name, icon, clr, thumb=None):
         embed = discord.Embed(
             description=f"🔊 {track}",
-            color=clr
+            color=clr,
+            timestamp=dt.datetime.utcnow()
         )
-        embed.set_image(url="https://i.pinimg.com/originals/64/53/24/645324641a0555cc55cea87787fc0bcb.gif")
+        embed.set_image(url=NOW_PLAYING_GIF_URL)
         embed.set_author(name="Now Playing 🎵 . . .")
         embed.set_footer(text=f'Requested by {display_name}', icon_url=icon)
+        if thumb:
+            embed.set_thumbnail(url=thumb)
         return embed
 
     def initial_connected(self, display_name, chanel_name, icon, clr):
         embed = discord.Embed(
             description='Bot has joined the channel. You can use music commands now.',
-            color=clr
+            color=clr,
+            timestamp=dt.datetime.utcnow()
         )
-        embed.set_image(url='https://i.gifer.com/7d20.gif')
+        embed.set_image(url=INITIAL_CONNECT_GIF_URL)
         embed.set_author(name=f"Connected to the {chanel_name} Successfully.")
         embed.set_footer(text=f'Requested by : {display_name}', icon_url=icon)
         return embed

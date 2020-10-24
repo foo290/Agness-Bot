@@ -16,6 +16,7 @@ from AGNESS_BOT.settings import (
 
 OWNER_IDS = list(OWNER_IDS.values())
 
+
 class Bot(basebot):
     def __init__(self):
         self.prefix = COMMAND_PREFIX
@@ -42,13 +43,12 @@ class Bot(basebot):
                 print(f'NOT FOUND!    AGNESS_BOT.bot.cogs.{cog}')
         print('COGs Loaded------------------------------------------\n')
 
-
     async def on_connect(self):
         print('Connecting...')
         print('OK!    Bot is connected')
 
     async def on_command_error(self, context, exception):
-        if isinstance(exception,commands.MissingRole):
+        if isinstance(exception, commands.MissingRole):
             await context.send('You are not allowed to use this command  🙅‍♂️  🚫')
         elif isinstance(exception, commands.CommandNotFound):
             await context.send('umm...🤔   This command is not valid. Atleast not for me. 😐')
@@ -85,9 +85,6 @@ class Bot(basebot):
                 print('Bot is online...')
         else:
             print('reconnecting')
-
-
-
 
 
 bot = Bot()

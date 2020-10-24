@@ -7,6 +7,7 @@ import asyncio
 import enum
 from discord.ext import commands
 from AGNESS_BOT.utils.embeds_utils import MusicEmbeds
+from AGNESS_BOT.utils.track_utils import scale_to_10
 from AGNESS_BOT.settings import (
     MUSIC_HOST,
     MUSIC_PORT,
@@ -17,6 +18,19 @@ from AGNESS_BOT.settings import (
     BOT_LEAVE_CHANNEL_DELAY,
     DEFAULT_VOLUME,
     MAX_VOLUME,
+)
+from AGNESS_BOT.utils.custom_exceptions import (
+    AlreadyConnectedToChannel,
+    NotVoiceChannel,
+    QueueIsEmpty,
+    NoTracksFound,
+    PlayerIsAlreadyPaused,
+    PlayerIsAlreadyPlaying,
+    NoMoreTracks,
+    NoPreviousTracks,
+    InvalidRepeatMode,
+    NotInQueue
+
 )
 
 MUSIC_SEARCH_ENGINE = MUSIC_SEARCH_ENGINE.lower()
@@ -29,50 +43,12 @@ OPTIONS = {
     "5⃣": 4,
 }
 
+debug_index = 1
+
 music_embeds = MusicEmbeds()
 
 URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 JUMP_REGEX = r"^([1-9]|10)$"
-
-
-class AlreadyConnectedToChannel(commands.CommandError):
-    pass
-
-
-class NotVoiceChannel(commands.CommandError):
-    pass
-
-
-class QueueIsEmpty(commands.CommandError):
-    pass
-
-
-class NoTracksFound(commands.CommandError):
-    pass
-
-
-class PlayerIsAlreadyPaused(commands.CommandError):
-    pass
-
-
-class PlayerIsAlreadyPlaying(commands.CommandError):
-    pass
-
-
-class NoMoreTracks(commands.CommandError):
-    pass
-
-
-class NoPreviousTracks(commands.CommandError):
-    pass
-
-
-class InvalidRepeatMode(commands.CommandError):
-    pass
-
-
-class NotInQueue(commands.CommandError):
-    pass
 
 
 class RepeatMode(enum.Enum):
@@ -83,7 +59,7 @@ class RepeatMode(enum.Enum):
 
 class Queue:
     def __init__(self):
-        self.__queue = []
+        self.__queue = list()
         self.position = 0
         self.repeat_mode = RepeatMode.NONE
 
@@ -127,9 +103,6 @@ class Queue:
             raise QueueIsEmpty
         return self.__queue[:self.position]
 
-    def empty(self):
-        self.__queue.clear()
-
     @property
     def length(self):
         return len(self.__queue)
@@ -137,19 +110,23 @@ class Queue:
     def add(self, *args):
         self.__queue.extend(args)
 
+    def empty(self):
+        self.__queue.clear()
+
+    def track_index(self, track):
+        return self.__queue.index(track)
+
     def get_next_track(self):
         if not self.__queue:
             raise QueueIsEmpty
         self.position += 1
         if self.position < 0:
             return None
-        elif self.position > len(self.__queue) - 1:
+        elif self.position > len(self.__queue) - 1:  # Queue Finished...
             if self.repeat_mode == RepeatMode.ALL:
-                self.position = 0
+                self.position = 0  # If queue is finished and repeat mode is on loop
             else:
-
                 return None
-                # print('something is terribly wrong')
         return self.__queue[self.position]
 
     def shuffle(self):
@@ -189,7 +166,7 @@ class Player(wavelink.Player):
 
     async def teardown(self):
         try:
-            await self.destroy()
+            await self.disconnect()
         except KeyError:
             pass
 
@@ -198,7 +175,8 @@ class Player(wavelink.Player):
             await ctx.send('No Tracks found for given query')
             raise NoTracksFound
         if isinstance(tracks, wavelink.TrackPlaylist):  # if tracks are a playlist
-            # self.queue.add(*tracks.tracks)
+            self.queue.add(*tracks.tracks)
+            print('is a playlist')
             pass
         elif len(tracks) == 1:
             self.queue.add(tracks[0])
@@ -209,9 +187,22 @@ class Player(wavelink.Player):
             track = await self.choose_track(ctx, tracks)  # Show option to choose from tracks
             if track is not None:
                 self.queue.add(track)
-                await ctx.send(f"Added {track.title} to the queue")
+                await ctx.send(
+                    embed=music_embeds.track_added(
+                        track,
+                        self.queue.track_index(track) + 1,
+                        ctx.author.display_name,
+                        ctx.author.avatar_url,
+                        ctx.author.color
+                    )
+                )
         if not self.is_playing:  # INITIAL Playing...
             await self.start_playback(self.queue.first_track)
+
+    async def start_playback(self, track):
+        requester = self.song_and_requester.get(track.title, r'Someone ¯\_(ツ)_/¯')  # get requester from dict
+        await self.show_now_playing_embed(requester, track)
+        await self.play(track)
 
     async def choose_track(self, ctx, tracks):
         self.sender = ctx
@@ -236,39 +227,49 @@ class Player(wavelink.Player):
             self.song_and_requester[tracks[OPTIONS[reaction.emoji]].title] = ctx  # ----> Set requester and song name
             return tracks[OPTIONS[reaction.emoji]]
 
-    async def start_playback(self, track):
-        requester = self.song_and_requester[track.title]  # get requester from dict
-        await self.show_now_playing_embed(requester, track)
-        await self.play(track)
-
     async def advance(self, song_index=0):
         """
         Plays songs, control is passed by on_player_stop()
         :return: None
         """
+        global debug_index
         try:
-            if song_index != 0:  # if song play is requested by number.
+            # ------------------------------------------------------------------ if song play is requested by number.
+            if song_index != 0:
                 if song_index - 1 > len(self.queue.all_tracks):
                     await self.sender.send('Requested number of song is not in playlist.')
                     raise NotInQueue
                 else:
-                    request_index_track = self.queue.all_tracks[song_index - 1]  # --> get requester from dict
+                    request_index_track = self.queue.all_tracks[song_index - 1]
                     await self.delete_now_playing_embed()
-                    requester = self.song_and_requester[request_index_track.title]  # --> get requester from dict
+
+                    requester = self.song_and_requester.get(
+                        request_index_track.title,
+                        r'Someone ¯\_(ツ)_/¯'
+                    )  # --> get requester from dict
+
                     await self.show_now_playing_embed(requester, request_index_track)
                     await self.play(request_index_track)
+            # ------------------------------------------------------------------ if song play is invoked by auto play.
             else:
                 track = self.queue.get_next_track()
                 if track is not None:
                     await self.delete_now_playing_embed()
-                    requester = self.song_and_requester[track.title]
+                    requester = self.song_and_requester.get(
+                        track.title,
+                        r'Someone ¯\_(ツ)_/¯'
+                    )  # --> get requester from dict
+
                     await self.show_now_playing_embed(requester, track)
                     await self.play(track)
                 else:
-                    await self.delete_now_playing_embed()
+                    debug_index += 1
                     await self.stop()
                     self.queue.empty()
+                    await self.delete_now_playing_embed()
+                debug_index += 1
         except QueueIsEmpty:
+            print('something is happening here too...')
             pass
 
     async def repeat_track(self):
@@ -289,7 +290,8 @@ class Player(wavelink.Player):
             track.title,
             ctx.author.display_name,
             ctx.author.avatar_url,
-            ctx.author.color
+            ctx.author.color,
+            track.thumb
         )
         self.nowPlaying = await ctx.send(embed=now_playing)
 
@@ -302,6 +304,74 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         self.initial_connect_embed = None
         self.current_volume = DEFAULT_VOLUME
         self.song_index = 0  # used to play songs directly by no. This variable should be managed manually.
+
+    @staticmethod
+    def check_query_or_jump(q):
+        try:
+            int(q)
+            if re.match(JUMP_REGEX, q):
+                return True
+            return False
+        except ValueError:
+            return False
+
+    @staticmethod
+    def set_search_engine(query):
+        if MUSIC_SEARCH_ENGINE == 'soundcloud':
+            return f"scsearch:{query}"
+        elif MUSIC_SEARCH_ENGINE == 'youtube':
+            return f"ytsearch:{query}"
+        else:
+            return f"scsearch:{query}"
+
+    def get_player(self, obj):
+        """
+        A get player utility implemented to quickly grab the player either by ctx or guild.
+        :param obj: Either ctx or guild
+        :return: player
+        """
+        if isinstance(obj, commands.Context):
+            return self.wavelink.get_player(obj.guild.id, cls=Player, context=obj)
+        elif isinstance(obj, discord.Guild):
+            return self.wavelink.get_player(obj.id, cls=Player)
+
+    async def cog_check(self, ctx):
+        """
+        This function ensures that music commands are not being used in DMs.
+        :param ctx: Context passed by DC command
+        :return: None
+        """
+        if isinstance(ctx.channel, discord.DMChannel):
+            await ctx.send('Music commands are not allowed in DMs')
+            return False
+        return True
+
+    async def start_nodes(self):
+        """
+        Main Node function which declares and initialize the node to connect to lava link server.
+        :return: None
+        """
+        await self.bot.wait_until_ready()
+
+        nodes = {
+            "MAIN": {
+                "host": MUSIC_HOST,
+                "port": MUSIC_PORT,
+                "rest_uri": REST_URI,
+                "password": MUSIC_SERVER_PW,
+                "identifier": 'MAIN ',
+                "region": MUSIC_SERVER_REGION
+            }
+        }
+        for node in nodes.values():
+            await self.wavelink.initiate_node(**node)
+
+    async def remove_initial_connect_embed(self):
+        if self.initial_connect_embed:
+            await self.initial_connect_embed.delete()
+            self.initial_connect_embed = None
+            return
+        return
 
     @commands.command(name='connect_node')
     async def node_connect(self, ctx):
@@ -337,18 +407,19 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         self.initial_connect_embed = await ctx.send(embed=embed)
         await player.set_volume(DEFAULT_VOLUME)
 
-    # Error handling for connect command =============================================================================
-    @connect_command.error
-    async def connect_command_error(self, ctx, exc):
+    @commands.command(name='disconnect', aliases=['leave', 'lv'])
+    async def disconnect_command(self, ctx):
         """
-        :param ctx: context passed by DC command
-        :param exc: Exception raised (in this case custom exception is raised) in Player class's connect method
+        This function is used to disconnect the bot from voice channel.
+        :param ctx: Context
         :return: None
         """
-        if isinstance(exc, AlreadyConnectedToChannel):
-            await ctx.send('Already connected to a voice channel')
-        elif isinstance(exc, NotVoiceChannel):
-            await ctx.send('No suitable voice channel provided')
+        player = self.get_player(ctx)
+        await ctx.send('Leaving...')
+        await player.teardown()
+        await ctx.send('Disconnected!')
+        await player.delete_now_playing_embed()
+        await self.remove_initial_connect_embed()
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -373,111 +444,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if payload.player.queue.repeat_mode == RepeatMode.ONE:
             await payload.player.repeat_track()
         else:
-            await payload.player.advance(self.song_index)
-            self.song_index = 0
-
-    async def cog_check(self, ctx):
-        """
-        This function ensures that music commands are not being used in DMs.
-        :param ctx: Context passed by DC command
-        :return: None
-        """
-        if isinstance(ctx.channel, discord.DMChannel):
-            await ctx.send('Music commands are not allowed in DMs')
-            return False
-        return True
-
-    @commands.command(name="volume", aliases=['vol', 'v'])
-    async def set_player_volume(self, ctx, v: t.Optional[str]):
-        try:
-            if v:
-                v = int(v)
-                if v <= MAX_VOLUME:
-                    player = self.get_player(ctx)
-                    await player.set_volume(v)
-                    if v > self.current_volume:
-                        await ctx.send(f'Volume Raised by : {v - self.current_volume}  ⤴.  Player volume is : {v}.  ')
-                    elif v < self.current_volume:
-                        await ctx.send(
-                            f'Volume Decreased by : {self.current_volume - v}  ⤵.  Player volume set to {v}.  ')
-                    else:
-                        await ctx.send(f'Player volume not changed. Current volume : {self.current_volume}.')
-                    self.current_volume = v
-                else:
-                    await ctx.send(f'Set volume in range 0-100')
+            if self.song_index != 0:
+                await payload.player.advance(self.song_index)
+                self.song_index = 0
             else:
-                await ctx.send(f'Current volume level is : {self.current_volume}.')
-        except ValueError:
-            ctx.send(f"Volume must be Integer")
-
-    async def remove_initial_connect_embed(self):
-        if self.initial_connect_embed:
-            await self.initial_connect_embed.delete()
-            self.initial_connect_embed = None
-            return
-        return
-
-    def set_search_engine(self, query):
-        if MUSIC_SEARCH_ENGINE == 'soundcloud':
-            return f"scsearch:{query}"
-        elif MUSIC_SEARCH_ENGINE == 'youtube':
-            return f"ytsearch:{query}"
-        else:
-            return f"scsearch:{query}"
-
-    async def start_nodes(self):
-        """
-        Main Node function which declares and initialize the node to connect to lava link server.
-        :return: None
-        """
-        await self.bot.wait_until_ready()
-
-        nodes = {
-            "MAIN": {
-                "host": MUSIC_HOST,
-                "port": MUSIC_PORT,
-                "rest_uri": REST_URI,
-                "password": MUSIC_SERVER_PW,
-                "identifier": 'MAIN ',
-                "region": MUSIC_SERVER_REGION
-            }
-        }
-        for node in nodes.values():
-            await self.wavelink.initiate_node(**node)
-
-    def get_player(self, obj):
-        """
-        A get player utility implemented to quickly grab the player either by ctx or guild.
-        :param obj: Either ctx or guild
-        :return: player
-        """
-        if isinstance(obj, commands.Context):
-            return self.wavelink.get_player(obj.guild.id, cls=Player, context=obj)
-        elif isinstance(obj, discord.Guild):
-            return self.wavelink.get_player(obj.id, cls=Player)
-
-    @commands.command(name='disconnect', aliases=['leave', 'lv'])
-    async def disconnect_command(self, ctx):
-        """
-        This function is used to disconnect the bot from voice channel.
-        :param ctx: Context
-        :return: None
-        """
-        player = self.get_player(ctx)
-        await ctx.send('Leaving...')
-        await player.teardown()
-        await ctx.send('Disconnected!')
-        await player.delete_now_playing_embed()
-        await self.remove_initial_connect_embed()
-
-    def check_query_or_jump(self, q):
-        try:
-            int(q)
-            if re.match(JUMP_REGEX, q):
-                return True
-            return False
-        except ValueError:
-            return False
+                await payload.player.advance()
 
     @commands.command(name='play', aliases=['p', 'ply'])
     async def play_command(self, ctx, *, query: t.Optional[str]):
@@ -512,13 +483,19 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 await player.add_tracks(ctx, await self.wavelink.get_tracks(query))
         # ----------------------------------------------------------------------
 
-    # Error handling for Play command =============================================================================
-    @play_command.error
-    async def play_command_error(self, ctx, exc):
-        if isinstance(exc, QueueIsEmpty):
-            await ctx.send("No songs to play as the queue is empty.")
-        elif isinstance(exc, NotVoiceChannel):
-            await ctx.send("No suitable voice channel was provided.")
+    @commands.command(name='pause', aliases=['pa'])
+    async def pause_command(self, ctx):
+        """
+        This function provides the functionality to pause the current song.
+        :param ctx: Context
+        :return: None
+        """
+        player = self.get_player(ctx)
+        if player.is_paused:
+            raise PlayerIsAlreadyPaused
+
+        await player.set_pause(True)
+        await ctx.send('⏸    Playback Paused!')
 
     @commands.command(name='stop', aliases=['s'])
     async def stop_command(self, ctx):
@@ -548,14 +525,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await player.stop()
         await ctx.send(f'Playing next track   ⏭')
 
-    # Error handling for next_command =============================================================================
-    @next_command.error
-    async def next_command_error(self, ctx, exc):
-        if isinstance(exc, QueueIsEmpty):
-            await ctx.send("This could not be executed as the queue is currently empty.")
-        elif isinstance(exc, NoMoreTracks):
-            await ctx.send("There are no more tracks in the queue.")
-
     @commands.command(name='previous', aliases=['-1', 'prv'])
     async def previous_command(self, ctx):
         """
@@ -571,51 +540,20 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await player.stop()
         await ctx.send('Playing previous track in queue.  ⏮')
 
-    # Error handling for previous_command =============================================================================
-    @previous_command.error
-    async def previous_command_error(self, ctx, exc):
-
-        if isinstance(exc, QueueIsEmpty):
-            await ctx.send("This could not be executed as the queue is currently empty.")
-        elif isinstance(exc, NoPreviousTracks):
-            await ctx.send("There are no previous tracks in the queue.")
-
-    @commands.command(name='pause', aliases=['pa'])
-    async def pause_command(self, ctx):
-        """
-        This function provides the functionality to pause the current song.
-        :param ctx: Context
-        :return: None
-        """
+    @commands.command(name='seek', aliases=['sk'])
+    async def seek_command(self, ctx, stride: t.Optional[int] = 1):
         player = self.get_player(ctx)
-        if player.is_paused:
-            raise PlayerIsAlreadyPaused
+        ct = player.queue.current_track
 
-        await player.set_pause(True)
-        await ctx.send('⏸    Playback Paused!')
-
-    # Error handling for pause_command =============================================================================
-    @pause_command.error
-    async def pause_command_error(self, ctx, exc):
-        if isinstance(exc, PlayerIsAlreadyPaused):
-            await ctx.send('⏸   Player is already paused!')
-
-    @commands.command(name='shuffle', aliases=['shfl', 'sfl'])
-    async def shuffle_command(self, ctx):
-        """
-        Shuffles the playlist.
-        :param ctx: context
-        :return: None
-        """
-        player = self.get_player(ctx)
-        player.queue.shuffle()
-        await ctx.send('Queue shuffled')
-
-    # Error handling for shuffle_command =============================================================================
-    @shuffle_command.error
-    async def shuffle_command_error(self, ctx, exc):
-        if isinstance(exc, QueueIsEmpty):
-            await ctx.send("The queue could not be shuffled as it is currently empty.")
+        length = ct.duration
+        seek_length = scale_to_10(int(length), int(stride))
+        if seek_length is not False:
+            await player.seek(seek_length)
+            await ctx.send(
+                f"Song is seeked by {seek_length // 1000} seconds, Current position is : "
+                f"{str(seek_length // 60000).zfill(2)}:{str(seek_length % 60).zfill(2)}")
+        else:
+            await ctx.send('stride is wrong')
 
     @commands.command(name='repeat', aliases=['rpt', 'rp'])
     async def repeat_command(self, ctx, mode: str):
@@ -637,6 +575,40 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             response = f"Repeat Mode has been set to {mode}."
 
         await ctx.send(response)
+
+    @commands.command(name="volume", aliases=['vol', 'v'])
+    async def set_player_volume(self, ctx, v: t.Optional[str]):
+        try:
+            if v:
+                v = int(v)
+                if v <= MAX_VOLUME:
+                    player = self.get_player(ctx)
+                    await player.set_volume(v)
+                    if v > self.current_volume:
+                        await ctx.send(f'Volume Raised by : {v - self.current_volume}  ⤴.  Player volume is : {v}.  ')
+                    elif v < self.current_volume:
+                        await ctx.send(
+                            f'Volume Decreased by : {self.current_volume - v}  ⤵.  Player volume set to {v}.  ')
+                    else:
+                        await ctx.send(f'Player volume not changed. Current volume : {self.current_volume}.')
+                    self.current_volume = v
+                else:
+                    await ctx.send(f'Set volume in range 0-100')
+            else:
+                await ctx.send(f'Current volume level is : {self.current_volume}.')
+        except ValueError:
+            ctx.send(f"Volume must be Integer")
+
+    @commands.command(name='shuffle', aliases=['shfl', 'sfl'])
+    async def shuffle_command(self, ctx):
+        """
+        Shuffles the playlist.
+        :param ctx: context
+        :return: None
+        """
+        player = self.get_player(ctx)
+        player.queue.shuffle()
+        await ctx.send('Queue shuffled')
 
     @commands.command(name='queue', aliases=['playlist', 'plylst', 'plst', 'pl'])
     async def queue_command(self, ctx, show: t.Optional[int] = 10):
@@ -664,33 +636,60 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             )
         )
 
+    # Exception handling for Play command =============================================================================
+    # Exception handling for next_command =============================================================================
+    # Exception handling for previous_command =========================================================================
+    # Exception handling for pause_command ============================================================================
+    # Exception handling for shuffle_command ==========================================================================
+    @connect_command.error
+    async def connect_command_error(self, ctx, exc):
+        """
+        :param ctx: context passed by DC command
+        :param exc: Exception raised (in this case custom exception is raised) in Player class's connect method
+        :return: None
+        """
+        if isinstance(exc, AlreadyConnectedToChannel):
+            await ctx.send('Already connected to a voice channel')
+        elif isinstance(exc, NotVoiceChannel):
+            await ctx.send('No suitable voice channel provided')
+
+    @play_command.error
+    async def play_command_error(self, ctx, exc):
+        if isinstance(exc, QueueIsEmpty):
+            await ctx.send("No songs to play as the queue is empty.")
+        elif isinstance(exc, NotVoiceChannel):
+            await ctx.send("No suitable voice channel was provided.")
+
+    @previous_command.error
+    async def previous_command_error(self, ctx, exc):
+        if isinstance(exc, QueueIsEmpty):
+            await ctx.send("This could not be executed as the queue is currently empty.")
+        elif isinstance(exc, NoPreviousTracks):
+            await ctx.send("There are no previous tracks in the queue.")
+
+    @pause_command.error
+    async def pause_command_error(self, ctx, exc):
+        if isinstance(exc, PlayerIsAlreadyPaused):
+            await ctx.send('⏸   Player is already paused!')
+
+    @next_command.error
+    async def next_command_error(self, ctx, exc):
+        if isinstance(exc, QueueIsEmpty):
+            await ctx.send("This could not be executed as the queue is currently empty.")
+        elif isinstance(exc, NoMoreTracks):
+            await ctx.send("There are no more tracks in the queue.")
+
+    @shuffle_command.error
+    async def shuffle_command_error(self, ctx, exc):
+        if isinstance(exc, QueueIsEmpty):
+            await ctx.send("The queue could not be shuffled as it is currently empty.")
+
     @queue_command.error
     async def queue_command_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
             await ctx.send("The queue is currently empty.")
 
 
-class KeepAlive(commands.Cog, wavelink.WavelinkMixin):
-    def __init__(self): pass
-
-    async def start_nodes(self):
-        """
-        Main Node function which declares and initialize the node to connect to lava link server.
-        :return: None
-        """
-        nodes = {
-            "MAIN": {
-                "host": MUSIC_HOST,
-                "port": MUSIC_PORT,
-                "rest_uri": REST_URI,
-                "password": MUSIC_SERVER_PW,
-                "identifier": 'MAIN ',
-                "region": MUSIC_SERVER_REGION
-            }
-        }
-        for node in nodes.values():
-            await self.wavelink.initiate_node(**node)
-
-
 def setup(bot):
     bot.add_cog(Music(bot))
+
