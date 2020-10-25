@@ -9,7 +9,7 @@ HOT_WORD = 'hey agness'
 COMMAND_PREFIX = '.'
 
 # Your bot token data_type : int
-BOT_TOKEN = os.environ.get('Agness_BOT_TOKEN')
+BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
 
 # A dict of owner names and their IDs. Name key is just for ease of differentiate for user, bot just user value by
 # list(OWNER_IDS.values()).
