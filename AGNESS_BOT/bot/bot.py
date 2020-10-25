@@ -37,10 +37,10 @@ class Bot(basebot):
         print('loading COGs-----------------------------------------')
         for cog in self.botcogs:
             try:
-                self.load_extension(f'AGNESS_BOT.bot.cogs.{cog}')
-                print(f'OK!    AGNESS_BOT.bot.cogs.{cog} Loaded.')
+                self.load_extension(f'{cog}')
+                print(f'OK!    {cog} Loaded.')
             except:
-                print(f'NOT FOUND!    AGNESS_BOT.bot.cogs.{cog}')
+                print(f'NOT FOUND!    {cog}')
         print('COGs Loaded------------------------------------------\n')
 
     async def on_connect(self):
@@ -51,7 +51,7 @@ class Bot(basebot):
         if isinstance(exception, commands.MissingRole):
             await context.send('You are not allowed to use this command  🙅‍♂️  🚫')
         elif isinstance(exception, commands.CommandNotFound):
-            await context.send('umm...🤔   This command is not valid. Atleast not for me. 😐')
+            await context.send('Sorry! but the command is invalid.')
         elif isinstance(exception, commands.MissingRequiredArgument):
             await context.send(exception)
         else:

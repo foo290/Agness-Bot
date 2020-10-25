@@ -14,7 +14,7 @@ class Admin(commands.Cog):
 
     @commands.has_role(ADMIN_ROLE)
     @commands.command()
-    async def ban(self,ctx, member: discord.Member, reason=None):
+    async def ban(self, ctx, member: discord.Member, reason=None):
 
         banembed = discord.Embed(
             title='Ban User ❌ ',
@@ -25,7 +25,7 @@ class Admin(commands.Cog):
         await member.ban(reason=reason)
         await ctx.send(embed=banembed)
 
-    async def send_unban(self,ctx, user):
+    async def send_unban(self, ctx, user):
         unbanembed = discord.Embed(
             title='Unban User ✅',
             description=f"{user.mention} is unbanned and allowed to interact.",
@@ -37,7 +37,7 @@ class Admin(commands.Cog):
 
     @commands.has_role(ADMIN_ROLE)
     @commands.command()
-    async def unban(self,ctx, *, member):
+    async def unban(self, ctx, *, member):
         banned_users = await ctx.guild.bans()
         user_dis = int(member)
 
@@ -81,6 +81,7 @@ class Admin(commands.Cog):
     @commands.command(aliases=['rm_silence'])
     async def unshh(self, ctx):
         global CHANNEL_MUTE
+
         unmuted = discord.Embed(
             description=f"Silence removed! You can send messages now. ☑",
             colour=discord.Color.green()

@@ -7,13 +7,15 @@ class MusicEmbeds:
     def __init__(self):
         pass
 
-    def show_state(self, state):
+    @staticmethod
+    def show_state(state):
         embed = discord.Embed(
             description=state,
         )
         return embed
 
-    def track_added(self, track, position, addedby, icon, color):
+    @staticmethod
+    def track_added(track, position, addedby, icon, color):
         embed = discord.Embed(
             title='Track Added! ✅ ',
             description='A new track is added in queue... 🎧',
@@ -29,7 +31,8 @@ class MusicEmbeds:
 
         return embed
 
-    def choose_track_embed(self, ctx, tracks, show_limit=5):
+    @staticmethod
+    def choose_track_embed(ctx, tracks, show_limit=5):
         embed = discord.Embed(
             title='Choose a song by clicking on reactions below.',
             description=(
@@ -47,7 +50,8 @@ class MusicEmbeds:
 
         return embed
 
-    def show_playlist(self, all_songs, currently_playing, upcoming_songs, showlimit, **kwargs):
+    @staticmethod
+    def show_playlist(all_songs, currently_playing, upcoming_songs, showlimit, **kwargs):
         embed = discord.Embed(
             title=f'Song Queue...  🎧',
             description=f'Showing up to next {showlimit} tracks',
@@ -76,7 +80,8 @@ class MusicEmbeds:
 
         return embed
 
-    def now_playing(self, track, display_name, icon, clr, thumb=None):
+    @staticmethod
+    def now_playing(track, display_name, icon, clr, thumb=None):
         embed = discord.Embed(
             description=f"🔊 {track}",
             color=clr,
@@ -89,7 +94,8 @@ class MusicEmbeds:
             embed.set_thumbnail(url=thumb)
         return embed
 
-    def initial_connected(self, display_name, chanel_name, icon, clr):
+    @staticmethod
+    def initial_connected(display_name, chanel_name, icon, clr):
         embed = discord.Embed(
             description='Bot has joined the channel. You can use music commands now.',
             color=clr,

@@ -97,7 +97,7 @@ async def help(ctx):
 async def load_exts(ctx, *, extension):
     await ctx.send(f'Cog : {extension}    Loading...')
     try:
-        bot.load_extension(f'AGNESS_BOT.bot.cogs.{extension}')
+        bot.load_extension(f'{extension}')
         await ctx.send(f'Cog : {extension}    Loaded Successfully!')
     except:
         await ctx.send(f'Cog : {extension}    Load Failed! ❌')
@@ -108,7 +108,7 @@ async def load_exts(ctx, *, extension):
 async def unload_exts(ctx, *, extension):
     await ctx.send(f'Cog : {extension}    UnLoading...')
     try:
-        bot.unload_extension(f'AGNESS_BOT.bot.cogs.{extension}')
+        bot.unload_extension(f'{extension}')
         await ctx.send(f'Cog : {extension}    UnLoaded Successfully!')
     except:
         await ctx.send(f'Cog : {extension}    UnLoad Failed! ❌')
@@ -120,13 +120,15 @@ async def reload_exts(ctx):
     await ctx.send('Reloading cogs...')
     for cog in COGS:
         try:
-            bot.unload_extension(f'AGNESS_BOT.bot.cogs.{cog}')
+            bot.unload_extension(f'{cog}')
         except:
             print(f'{cog} does not exist')
             pass
     for cogs in bot.botcogs:
-        bot.load_extension(f'AGNESS_BOT.bot.cogs.{cogs}')
+        bot.load_extension(f'{cogs}')
     await ctx.send('COGs Loaded!')
 
 
 bot.run()
+
+

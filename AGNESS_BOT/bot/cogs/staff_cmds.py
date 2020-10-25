@@ -9,7 +9,6 @@ class Staff(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.guild_only()
     @commands.has_role(STAFF_ROLE)
     @commands.command()
     async def mute(self, ctx, member: discord.Member, time=15, unit='min', reason=None):
@@ -34,7 +33,6 @@ class Staff(commands.Cog):
                 "something went wrong with the command"
             )
 
-    @commands.guild_only()
     @commands.has_role(STAFF_ROLE)
     @commands.command()
     async def unmute(self, ctx, member: discord.Member):
@@ -54,7 +52,6 @@ class Staff(commands.Cog):
                 "something went wrong with the command"
             )
 
-    @commands.guild_only()
     @commands.has_role(STAFF_ROLE)
     @commands.command(aliases=['cls'])
     async def clear(self, ctx, amount=4):
@@ -82,7 +79,7 @@ class Staff(commands.Cog):
                 f'```Exception : {r[1]}```'
             )
 
-    @commands.guild_only()
+    # @commands.guild_only()
     @commands.has_role(STAFF_ROLE)
     @commands.command(aliases=['warn', 'w'])
     async def warning(self, ctx, member: discord.Member, *, reason=None):

@@ -19,6 +19,7 @@ from AGNESS_BOT.settings import (
     DEFAULT_VOLUME,
     MAX_VOLUME,
 )
+
 from AGNESS_BOT.utils.custom_exceptions import (
     AlreadyConnectedToChannel,
     NotVoiceChannel,
@@ -34,6 +35,7 @@ from AGNESS_BOT.utils.custom_exceptions import (
 )
 
 MUSIC_SEARCH_ENGINE = MUSIC_SEARCH_ENGINE.lower()
+KEEP_ALIVE = True
 
 OPTIONS = {
     "1️⃣": 0,
@@ -122,9 +124,9 @@ class Queue:
         self.position += 1
         if self.position < 0:
             return None
-        elif self.position > len(self.__queue) - 1:  # Queue Finished...
+        elif self.position > len(self.__queue) - 1:     # Queue Finished...
             if self.repeat_mode == RepeatMode.ALL:
-                self.position = 0  # If queue is finished and repeat mode is on loop
+                self.position = 0                       # If queue is finished and repeat mode is on loop
             else:
                 return None
         return self.__queue[self.position]
@@ -132,11 +134,9 @@ class Queue:
     def shuffle(self):
         if not self.__queue:
             raise QueueIsEmpty
-        # upcoming = self.upcoming
         random.shuffle(self.__queue)
-        # self.__queue = upcoming
 
-    def set_repeat_mode(self, mode):
+    def set_repeat_mode(self, mode: str) -> None:
         if mode == 'none':
             self.repeat_mode = RepeatMode.NONE
         elif mode == '1':
@@ -153,7 +153,7 @@ class Player(wavelink.Player):
         self.nowPlaying = None
         # Keys are song title and values are ctx.
         # use as self.song_and_requester[track.title] = ctx
-        self.song_and_requester = dict()  # A dict containing songs and their requester.
+        self.song_and_requester = dict()                    # A dict containing songs and their requester.
 
     async def connect(self, ctx, channel=None):
         if self.is_connected:
@@ -166,11 +166,11 @@ class Player(wavelink.Player):
 
     async def teardown(self):
         try:
-            await self.disconnect()
+            await self.destroy()
         except KeyError:
             pass
 
-    async def add_tracks(self, ctx, tracks):
+    async def add_tracks(self, ctx, tracks: list) -> None:
         if not tracks:
             await ctx.send('No Tracks found for given query')
             raise NoTracksFound
@@ -441,10 +441,16 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener('on_track_end')
     @wavelink.WavelinkMixin.listener('on_track_exception')
     async def on_player_stop(self, node, payload):
+        """
+        The control is passed to this function on any of the condition from above decorators.
+        :param node:
+        :param payload:
+        :return:
+        """
         if payload.player.queue.repeat_mode == RepeatMode.ONE:
             await payload.player.repeat_track()
         else:
-            if self.song_index != 0:
+            if self.song_index != 0:                    # If music is requested by number.
                 await payload.player.advance(self.song_index)
                 self.song_index = 0
             else:
@@ -463,23 +469,23 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not player.is_connected:
             await player.connect(ctx)
         # ----------------------------------------------------------------------
-        if query is None:  # Resume Track Checks
+        if query is None:                                  # Resume Track Checks
             if player.queue.is_empty:
                 raise QueueIsEmpty
             if not player.is_paused:
                 await ctx.send('🔊  Player is already playing...')
-            else:  # Resume Music
+            else:                                           # Resume Music
                 await player.set_pause(False)
                 await ctx.send('▶    Playback resumed')
         # ----------------------------------------------------------------------
-        else:  # Query Search
-            if self.check_query_or_jump(query):  # Jump tracks by number (index)
+        else:                                               # Query Search
+            if self.check_query_or_jump(query):             # Jump tracks by number (index)
                 self.song_index = int(query)
-                await player.stop()  # Gives control to >> on_player_stop()
+                await player.stop()                         # Gives control to >> on_player_stop()
             else:
-                query = query.strip("<>")  # search by link
+                query = query.strip("<>")                   # search by link
                 if not re.match(URL_REGEX, query):
-                    query = self.set_search_engine(query)  # search by song name
+                    query = self.set_search_engine(query)   # search by song name
                 await player.add_tracks(ctx, await self.wavelink.get_tracks(query))
         # ----------------------------------------------------------------------
 
@@ -567,7 +573,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if mode == 'none':
             response = f"Repeat Mode has been set to {mode.title()}. No song will be repeated."
         elif mode in ('1', 'current'):
-            response = f'Repeat mode has been set to {mode}. Current song is on loooooooooooop  🔂'
+            response = f'Repeat mode has been set to {mode}. Current song is on loop  🔂'
         elif mode == 'all':
             response = f'Repeat mode has been set to {mode}. ' \
                        f'Current playlist will be played over and over and over and... .  .   . over again!  🔁'

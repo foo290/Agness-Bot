@@ -9,7 +9,7 @@ HOT_WORD = 'hey agness'
 COMMAND_PREFIX = '.'
 
 # Your bot token data_type : int
-BOT_TOKEN = os.environ.get('AGNESS_BOT_TOKEN')
+BOT_TOKEN = os.environ.get('Agness_BOT_TOKEN')
 
 # A dict of owner names and their IDs. Name key is just for ease of differentiate for user, bot just user value by
 # list(OWNER_IDS.values()).
@@ -30,11 +30,11 @@ ON_DISCONNECT_DM = True
 
 # Computer Operation Groups (COGs). Add your COG files here.
 COGS = [
-    'admin_cmds',
-    'dm_cmds',
-    'members_cmds',
-    'staff_cmds',
-    'musiccog',
+    'AGNESS_BOT.bot.cogs.admin_cmds',
+    'AGNESS_BOT.bot.cogs.dm_cmds',
+    'AGNESS_BOT.bot.cogs.members_cmds',
+    'AGNESS_BOT.bot.cogs.staff_cmds',
+    'AGNESS_BOT.bot.cogs.musiccog',
 ]
 
 # These names will be used to sort commands based on roles. For example if your Admin has a different name "Hokagye",
