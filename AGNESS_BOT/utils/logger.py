@@ -41,15 +41,16 @@ def get_custom_logger(name, level=logging.DEBUG, console=True):
     try:
         filehandler = logging.FileHandler(LOG_FILE)
         filehandler.setLevel(level)
+        filehandler.setFormatter(formatter)
+        _logger.addHandler(filehandler)
     except:
         pass
+
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setLevel(level)
 
-    filehandler.setFormatter(formatter)
     stream_handler.setFormatter(formatter)
 
     if console:
         _logger.addHandler(stream_handler)
-    _logger.addHandler(filehandler)
     return _logger
