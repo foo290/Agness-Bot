@@ -103,7 +103,8 @@ class MusicEmbeds:
     @staticmethod
     def initial_connected(display_name, chanel_name, icon, clr):
         embed = discord.Embed(
-            description='Bot has joined the channel. You can use music commands now.',
+
+            description='Thanks for inviting me to the party 🥳 Lets drop some beats. 🎛',
             color=clr,
             timestamp=dt.datetime.utcnow()
         )
@@ -111,6 +112,10 @@ class MusicEmbeds:
         embed.set_author(name=f"Connected to the {chanel_name} Successfully.")
         embed.set_footer(text=f'Requested by : {display_name}', icon_url=icon)
         return embed
+
+    @staticmethod
+    def show_info():
+        ...
 
 
 def get_reminder_embeds(p_user, s_user, task, time, unit, type_='individual'):

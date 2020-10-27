@@ -20,8 +20,8 @@ BOT_CONFIGS = {
     'BOT_TOKEN': os.environ.get('AGNESS_BOT_TOKEN'),
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS': COGS,
-    'ACTIVITY_TYPE': act.watching,
-    'ACTIVITY_NAME': 'the world collapse!'
+    'ACTIVITY_TYPE': act.listening,
+    'ACTIVITY_NAME': 'to your commands.'
 
 
 }
@@ -52,9 +52,10 @@ COMMAND_ALIASES = {
 
 MUSIC_SERVER_CONFIGS = {
     'MUSIC_HOST': "lava-link-server.herokuapp.com",
+
     'MUSIC_PORT': 80,
     'REST_URI': "http://lava-link-server.herokuapp.com",
-    'MUSIC_SERVER_PW': os.environ.get('MUSIC_SERVER_PW'),
+    'MUSIC_SERVER_PW': "serverserveserverdata",
     'MUSIC_SERVER_REGION': "na",
     'MUSIC_SEARCH_ENGINE': "soundcloud",
 }
@@ -65,7 +66,7 @@ MUSIC_PLAYER_CONFIGS = {
 }
 
 MUSIC_CHANNEL_CONFIGS = {
-    'BOT_LEAVE_DELAY': 60,
+    'BOT_LEAVE_DELAY': 10,
     'NOW_PLAYING_GIF_URL': r"https://i.pinimg.com/originals/64/53/24/645324641a0555cc55cea87787fc0bcb.gif",
     'INITIAL_CONNECT_GIF_URL': r"https://i.gifer.com/7d20.gif",
 }
