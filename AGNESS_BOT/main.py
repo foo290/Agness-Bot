@@ -1,18 +1,26 @@
 from AGNESS_BOT.bot import bot
-from AGNESS_BOT.settings import (
-    HOT_WORD,
-    DEFAULT_ROLE,
-    ADMIN_ROLE,
-    COGS
-)
+from AGNESS_BOT import configs
 from AGNESS_BOT.user_interaction.response import Respond
 from discord.ext import commands
 from AGNESS_BOT.utils.embeds_utils import custom_help_cmd
+from AGNESS_BOT import logger
+
+putlog = logger.get_custom_logger(__name__)
+
+putlog.info("+-------------------------------+")
+putlog.info("| Spinning Up...  STATUS : OK!  |")
+putlog.info("+-------------------------------+\n")
 
 respond_to_user = Respond()
 
 TALK_AGNESS = False
 active_chat = list()
+
+HOT_WORD = configs.HOT_WORD
+DEFAULT_ROLE = configs.DEFAULT_ROLE
+ADMIN_ROLE = configs.ADMIN_ROLE
+COGS = configs.COGS
+
 
 
 def check_hotword(msg, author, message):
@@ -95,38 +103,45 @@ async def help(ctx):
 @commands.has_role(ADMIN_ROLE)
 @bot.command(aliases=['lcog'])
 async def load_exts(ctx, *, extension):
+    putlog.info(f'Cog : {extension}    Loading...')
     await ctx.send(f'Cog : {extension}    Loading...')
     try:
         bot.load_extension(f'{extension}')
         await ctx.send(f'Cog : {extension}    Loaded Successfully!')
+        putlog.info(f'Cog : {extension}    OK!')
     except:
         await ctx.send(f'Cog : {extension}    Load Failed! ❌')
+        putlog.error(f'Cog : {extension}    LOAD FAILED!')
 
 
 @commands.has_role(ADMIN_ROLE)
 @bot.command(aliases=['ulcog'])
 async def unload_exts(ctx, *, extension):
+    putlog.info(f'Cog : {extension}    UnLoading...')
     await ctx.send(f'Cog : {extension}    UnLoading...')
     try:
         bot.unload_extension(f'{extension}')
         await ctx.send(f'Cog : {extension}    UnLoaded Successfully!')
+        putlog.info(f'Cog : {extension}    OK!')
     except:
         await ctx.send(f'Cog : {extension}    UnLoad Failed! ❌')
+        putlog.error(f'Cog : {extension}    UNLOAD FAILED!')
 
 
 @commands.has_role(ADMIN_ROLE)
 @bot.command(aliases=['rlcog'])
 async def reload_exts(ctx):
+    putlog.info('Reloading cogs...')
     await ctx.send('Reloading cogs...')
     for cog in COGS:
         try:
             bot.unload_extension(f'{cog}')
         except:
-            print(f'{cog} does not exist')
-            pass
+            putlog.error(f'Cog : {cog}          FAILED!')
     for cogs in bot.botcogs:
         bot.load_extension(f'{cogs}')
     await ctx.send('COGs Loaded!')
+    putlog.info('COGs Loaded        OK!')
 
 
 bot.run()

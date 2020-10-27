@@ -3,7 +3,10 @@ import discord
 from AGNESS_BOT.utils.time_utils import calculate_time
 from AGNESS_BOT.utils.embeds_utils import custom_help_cmd
 import asyncio
-from AGNESS_BOT.settings import ADMIN_ROLE, BOT_NAME
+from AGNESS_BOT import configs
+
+ADMIN_ROLE = configs.ADMIN_ROLE
+BOT_NAME = configs.BOT_NAME
 
 CHANNEL_MUTE = False
 

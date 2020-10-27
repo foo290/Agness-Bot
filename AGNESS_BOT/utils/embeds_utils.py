@@ -1,6 +1,11 @@
 import discord
-from AGNESS_BOT.settings import COMMAND_PREFIX, BOT_NAME, NOW_PLAYING_GIF_URL, INITIAL_CONNECT_GIF_URL
+from AGNESS_BOT import configs
 import datetime as dt
+
+COMMAND_PREFIX = configs.COMMAND_PREFIX
+BOT_NAME = configs.BOT_NAME
+NOW_PLAYING_GIF_URL = configs.NOW_PLAYING_GIF_URL
+INITIAL_CONNECT_GIF_URL = configs.INITIAL_CONNECT_GIF_URL
 
 
 class MusicEmbeds:
@@ -81,10 +86,10 @@ class MusicEmbeds:
         return embed
 
     @staticmethod
-    def now_playing(track, display_name, icon, clr, thumb=None):
+    def now_playing(track, display_name, icon, clr=discord.Color.blurple(), thumb=None):
         embed = discord.Embed(
             description=f"🔊 {track}",
-            color=clr,
+            colour=clr,
             timestamp=dt.datetime.utcnow()
         )
         embed.set_image(url=NOW_PLAYING_GIF_URL)
@@ -92,6 +97,7 @@ class MusicEmbeds:
         embed.set_footer(text=f'Requested by {display_name}', icon_url=icon)
         if thumb:
             embed.set_thumbnail(url=thumb)
+
         return embed
 
     @staticmethod

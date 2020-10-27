@@ -1,20 +1,20 @@
 from discord.ext.commands import Bot as basebot
 from discord.ext import commands
 import discord
-from AGNESS_BOT.settings import (
-    DEFAULT_ROLE,
-    COMMAND_PREFIX,
-    BOT_TOKEN,
-    ON_READY_DM,
-    ON_CONNECT_DM,
-    ON_DISCONNECT_DM,
-    SEND_DM,
-    SEND_DM_TO,
-    COGS,
-    OWNER_IDS
-)
+from AGNESS_BOT import configs, logger
 
-OWNER_IDS = list(OWNER_IDS.values())
+putlog = logger.get_custom_logger(__name__)
+
+DEFAULT_ROLE = configs.DEFAULT_ROLE
+COMMAND_PREFIX = configs.COMMAND_PREFIX
+BOT_TOKEN = configs.BOT_TOKEN
+ON_READY_DM = configs.ON_READY_DM
+ON_CONNECT_DM = configs.ON_CONNECT_DM
+ON_DISCONNECT_DM = configs.ON_DISCONNECT_DM
+SEND_DM = configs.SEND_DM
+SEND_DM_TO = configs.SEND_DM_TO
+COGS = configs.COGS
+OWNER_IDS = configs.OWNER_IDS
 
 
 class Bot(basebot):
@@ -34,18 +34,17 @@ class Bot(basebot):
         super().run(self.token, reconnect=True)
 
     def setup(self):
-        print('loading COGs-----------------------------------------')
+        putlog.info('loading COGs -------------------------------------------+')
         for cog in self.botcogs:
             try:
                 self.load_extension(f'{cog}')
-                print(f'OK!    {cog} Loaded.')
+                putlog.info('{: <40} Loaded.     OK!'.format(str(cog)))
             except:
-                print(f'NOT FOUND!    {cog}')
-        print('COGs Loaded------------------------------------------\n')
+                putlog.error(f'{cog}        NOT FOUND!')
+        putlog.info('COGs Loaded---------------------------------------------+\n')
 
     async def on_connect(self):
-        print('Connecting...')
-        print('OK!    Bot is connected')
+        putlog.debug('Bot is connected.      OK!')
 
     async def on_command_error(self, context, exception):
         if isinstance(exception, commands.MissingRole):
@@ -55,14 +54,16 @@ class Bot(basebot):
         elif isinstance(exception, commands.MissingRequiredArgument):
             await context.send(exception)
         else:
-            raise getattr(exception, "original", exception)
+            original = getattr(exception, "original", exception)
+            putlog.exception(exception)
+            raise original
+            # return
 
     async def on_error(self, event_method, *args, **kwargs):
         raise
 
     async def on_disconnect(self):
-
-        print('bot is disconnected...')
+        putlog.error('Bot is disconnected...    DISCONNECTED!')
 
     async def on_member_join(self, member):
         role = discord.utils.get(member.guild.roles, name=DEFAULT_ROLE)
@@ -70,7 +71,7 @@ class Bot(basebot):
 
     async def on_ready(self):
         await bot.change_presence(
-            activity=discord.Activity(type=discord.ActivityType.watching, name="the world collapse"))
+            activity=discord.Activity(type=configs.ACTIVITY_TYPE, name=configs.ACTIVITY_NAME))
 
         if not self.ready:
             self.ready = True
@@ -80,11 +81,12 @@ class Bot(basebot):
                     assert isinstance(dmuser, int)
                     owner = self.get_user(dmuser)
                     await owner.send('Bot is Online...')
-                print('Bot is online...')
+                putlog.debug('Bot is online...       OK!')
             else:
-                print('Bot is online...')
+                putlog.debug('Bot is online...       OK!')
         else:
-            print('reconnecting')
+            putlog.warning('Bot is online...       RECONNECTING!')
 
 
 bot = Bot()
+
