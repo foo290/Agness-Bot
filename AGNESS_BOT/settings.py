@@ -15,9 +15,9 @@ OWNER_IDS = {
 }
 
 BOT_CONFIGS = {
-    'BOT_NAME': "Amadeus",
-    'COMMAND_PREFIX': "!",
-    'BOT_TOKEN': os.environ.get('AMADEUS_BOT_TOKEN'),
+    'BOT_NAME': "Agness",
+    'COMMAND_PREFIX': ".",
+    'BOT_TOKEN': os.environ.get('AGNESS_BOT_TOKEN'),
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS': COGS,
     'ACTIVITY_TYPE': act.watching,
@@ -51,11 +51,11 @@ COMMAND_ALIASES = {
 }
 
 MUSIC_SERVER_CONFIGS = {
-    # 'MUSIC_HOST': "lava-link-server.herokuapp.com",
-    'MUSIC_HOST': "127.0.0.1",
+    # 'MUSIC_HOST': "",
+    'MUSIC_HOST': "lava-link-server.herokuapp.com",
 
-    'MUSIC_PORT': 2333,
-    'REST_URI': "http://127.0.0.1:2333",
+    'MUSIC_PORT': 80,
+    'REST_URI': "http://lava-link-server.herokuapp.com",
     'MUSIC_SERVER_PW': "serverserveserverdata",
     'MUSIC_SERVER_REGION': "na",
     'MUSIC_SEARCH_ENGINE': "soundcloud",
