@@ -20,6 +20,32 @@ class MusicEmbeds:
         return embed
 
     @staticmethod
+    def show_player_info(*args):
+        cp, ct, ct_index, requester, rptmode, c_vol, m_vol, tracks, Upcmg_song = args
+        embed = discord.Embed(
+            title='Info Panel',
+            description='general information of current player.',
+            timestamp=dt.datetime.utcnow()
+        )
+        embed.add_field(
+            name='General Info. ',
+            value=f"**Current Position** : {cp}\n"
+                  f"**Current Track** : {ct}\n"
+                  f"**Current Track Index** : {ct_index} (Actual index in Queue.)\n"
+                  f"**Repeat Mode** : {rptmode}\n"
+                  f"**Current Volume** : {c_vol}\n"
+                  f"**Max Volume** : {m_vol}\n"
+                  f"**Upcoming Song** : {''.join(Upcmg_song)}",
+            inline=False
+        )
+        embed.add_field(
+            name="Songs snap (upto 10 only...)",
+            value='\n\n'.join([f"👉 {t}" for t in tracks]),
+            inline=False
+        )
+        return embed
+
+    @staticmethod
     def track_added(track, position, addedby, icon, color):
         embed = discord.Embed(
             title='Track Added! ✅ ',

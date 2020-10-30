@@ -54,9 +54,9 @@ class Bot(basebot):
         elif isinstance(exception, commands.MissingRequiredArgument):
             await context.send(exception)
         else:
-            original = getattr(exception, "original", exception)
+            # original = getattr(exception, "original", exception)
             putlog.exception(exception)
-            raise original
+            # raise original
             # return
 
     async def on_error(self, event_method, *args, **kwargs):
@@ -89,4 +89,3 @@ class Bot(basebot):
 
 
 bot = Bot()
-

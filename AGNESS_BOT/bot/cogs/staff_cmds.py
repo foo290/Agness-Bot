@@ -82,7 +82,6 @@ class Staff(commands.Cog):
                 f'```Exception : {r[1]}```'
             )
 
-    # @commands.guild_only()
     @commands.has_role(STAFF_ROLE)
     @commands.command(aliases=['warn', 'w'])
     async def warning(self, ctx, member: discord.Member, *, reason=None):
@@ -96,6 +95,8 @@ class Staff(commands.Cog):
         warning_embed.set_footer(text=f'powered by : {BOT_NAME}')
 
         await ctx.send(embed=warning_embed)
+
+
 
 
 def setup(client):

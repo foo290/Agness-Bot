@@ -40,3 +40,4 @@ class InvalidRepeatMode(commands.CommandError):
 class NotInQueue(commands.CommandError):
     pass
 
+

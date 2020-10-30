@@ -5,6 +5,7 @@ from discord.ext import commands
 from AGNESS_BOT.utils.embeds_utils import custom_help_cmd
 from AGNESS_BOT import logger
 
+channel_id = configs.MUSIC_CMD_CHANNEL
 putlog = logger.get_custom_logger(__name__)
 
 putlog.info("+-------------------------------+")
@@ -20,7 +21,6 @@ HOT_WORD = configs.HOT_WORD
 DEFAULT_ROLE = configs.DEFAULT_ROLE
 ADMIN_ROLE = configs.ADMIN_ROLE
 COGS = configs.COGS
-
 
 
 def check_hotword(msg, author, message):
@@ -145,5 +145,3 @@ async def reload_exts(ctx):
 
 
 bot.run()
-
-
