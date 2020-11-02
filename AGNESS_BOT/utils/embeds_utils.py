@@ -1,5 +1,6 @@
 import discord
 from AGNESS_BOT import configs
+from . decorators import export
 import datetime as dt
 
 COMMAND_PREFIX = configs.COMMAND_PREFIX
@@ -8,6 +9,7 @@ NOW_PLAYING_GIF_URL = configs.NOW_PLAYING_GIF_URL
 INITIAL_CONNECT_GIF_URL = configs.INITIAL_CONNECT_GIF_URL
 
 
+@export
 class MusicEmbeds:
     def __init__(self):
         pass
@@ -21,7 +23,7 @@ class MusicEmbeds:
 
     @staticmethod
     def show_player_info(*args):
-        cp, ct, ct_index, requester, rptmode, c_vol, m_vol, tracks, Upcmg_song = args
+        cp, ct, ct_index, requester, rptmode, c_vol, m_vol, tracks = args
         embed = discord.Embed(
             title='Info Panel',
             description='general information of current player.',
@@ -34,13 +36,12 @@ class MusicEmbeds:
                   f"**Current Track Index** : {ct_index} (Actual index in Queue.)\n"
                   f"**Repeat Mode** : {rptmode}\n"
                   f"**Current Volume** : {c_vol}\n"
-                  f"**Max Volume** : {m_vol}\n"
-                  f"**Upcoming Song** : {''.join(Upcmg_song)}",
+                  f"**Max Volume** : {m_vol}\n",
             inline=False
         )
         embed.add_field(
             name="Songs snap (upto 10 only...)",
-            value='\n\n'.join([f"👉 {t}" for t in tracks]),
+            value='\n'.join([f"**{i+1} ->** {t}" for i,t in enumerate(tracks)]),
             inline=False
         )
         return embed
@@ -144,6 +145,7 @@ class MusicEmbeds:
         ...
 
 
+@export
 def get_reminder_embeds(p_user, s_user, task, time, unit, type_='individual'):
     if type_ == 'mutual':
         m_reminder_set = discord.Embed(
@@ -186,6 +188,7 @@ def get_reminder_embeds(p_user, s_user, task, time, unit, type_='individual'):
         return reminder_set, reminder_complete
 
 
+@export
 def custom_help_cmd(user_type='admin', client=None):
     if user_type == 'admin':
         admin_help = discord.Embed(

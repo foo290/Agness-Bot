@@ -41,3 +41,15 @@ class NotInQueue(commands.CommandError):
     pass
 
 
+__all__ = [
+    "AlreadyConnectedToChannel",
+    "NotVoiceChannel",
+    "QueueIsEmpty",
+    "NoTracksFound",
+    "PlayerIsAlreadyPlaying",
+    "PlayerIsAlreadyPaused",
+    "NoMoreTracks",
+    "NoPreviousTracks",
+    "InvalidRepeatMode",
+    "NotInQueue",
+]

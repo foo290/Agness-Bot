@@ -11,5 +11,3 @@ class Config(dict):
     def __getattr__(self, item):
         return self.get(item)
 
-
-__all__ = [Config]

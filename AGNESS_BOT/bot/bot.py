@@ -1,52 +1,121 @@
-from discord.ext.commands import Bot as basebot
+"""
+NOTE : This project follows PEP 8 Styling Guide. If anything is not according to PEP 8, feel free to make it.
+
+This module is main Bot module.
+DemonBot class in inherited from Bot class and necessary methods are overridden.
+
+configs (imported) is a dict containing every config defined in settings.py and accessible by "." (dot) operator.
+"""
+
+from discord.ext.commands import Bot
 from discord.ext import commands
 import discord
 from AGNESS_BOT import configs, logger
 
 putlog = logger.get_custom_logger(__name__)
 
+# Configurations from settings.py
+
 DEFAULT_ROLE = configs.DEFAULT_ROLE
 COMMAND_PREFIX = configs.COMMAND_PREFIX
 BOT_TOKEN = configs.BOT_TOKEN
-ON_READY_DM = configs.ON_READY_DM
-ON_CONNECT_DM = configs.ON_CONNECT_DM
-ON_DISCONNECT_DM = configs.ON_DISCONNECT_DM
-SEND_DM = configs.SEND_DM
-SEND_DM_TO = configs.SEND_DM_TO
+BOT_NAME = configs.BOT_NAME
+COGS_DIR = configs.COGS_DIR
 COGS = configs.COGS
 OWNER_IDS = configs.OWNER_IDS
 
+DM_RECIPIENT = configs.DM_RECIPIENT
+SEND_DM = configs.SEND_DM
+ON_CONNECT = configs.ON_CONNECT
 
-class Bot(basebot):
+
+class DemonBot(Bot):
+    """
+    Main Bot class inherited from discord.ext.commands "Bot".
+    Intents related stuff happens here.
+    """
+
     def __init__(self):
         self.prefix = COMMAND_PREFIX
         self.ready = False
+        self.bot_name = BOT_NAME
         self.token = BOT_TOKEN
         self.botcogs = COGS
-        self.send_dm = SEND_DM
-        self.on_ready_dm = ON_READY_DM
-        self.on_connect_dm = ON_CONNECT_DM
-        self.on_disconnect_dm = ON_DISCONNECT_DM
-        self.dm_users = SEND_DM_TO
+        self.log_configs()
+        self.dm_recipient = DM_RECIPIENT
+        self.send_dm_authorization = SEND_DM
+        self.on_connect_dm = ON_CONNECT
         super().__init__(command_prefix=self.prefix, owner_ids=OWNER_IDS)
+
+    @staticmethod
+    def log_configs() -> None:
+        """
+        This function just logs the current configs bot is starting with.
+        :return: None
+        """
+
+        putlog.info("Bot will start with the following configs...")
+        putlog.info(f"Default Role : {DEFAULT_ROLE}")
+        putlog.info(f"Owner IDs : {OWNER_IDS}")
+        putlog.info(f"Command Prefix : {COMMAND_PREFIX}")
+
+    async def on_member_join(self, member) -> None:
+        """
+        Assign a role of "DEFAULT_ROLE" to every user who join the server.
+        DEFAULT_ROLE: This is defined in settings.py
+        :param member: Passed by discord, the user who joined the server.
+        :return: None
+        """
+
+        putlog.info(f'{member} has joined!')
+        role = discord.utils.get(member.guild.roles, name=DEFAULT_ROLE)
+        await member.add_roles(role)
+        putlog.info(f"{member} has assigned with {role} role.")
+
+    async def on_member_remove(self, member) -> None:
+        """
+        Events that should take place when a user is either kicked, or left the server.
+        :param member: Passed by discord, the member related to the event.
+        :return: None
+        """
+
+        putlog.info(f"{member} has left the server")
 
     def run(self):
         super().run(self.token, reconnect=True)
 
-    def setup(self):
+    def setup(self) -> None:
+        """
+        This function loads the COGS defined in settings.py
+        :return: None
+        """
+
         putlog.info('loading COGs -------------------------------------------+')
         for cog in self.botcogs:
             try:
-                self.load_extension(f'{cog}')
-                putlog.info('{: <40} Loaded.     OK!'.format(str(cog)))
+                self.load_extension(f'{COGS_DIR + cog}')
+                putlog.info('{: <40} Loaded.     OK!'.format(str(COGS_DIR + cog)))
             except:
-                putlog.error(f'{cog}        NOT FOUND!')
+                putlog.error(f'{COGS_DIR + cog}        NOT FOUND!')
         putlog.info('COGs Loaded---------------------------------------------+\n')
 
-    async def on_connect(self):
-        putlog.debug('Bot is connected.      OK!')
+    async def on_connect(self) -> None:
+        """
+        On connect event stuffs here...
+        :return: None
+        """
+        putlog.debug('DemonBot is connected.      OK!')
 
     async def on_command_error(self, context, exception):
+        """
+        Overridden Function !
+        Global Exception Handling here...
+        Exceptions are handled locally in COGS too but common ones are handled here.
+        :param context: Passed by discord
+        :param exception: Passed by discord
+        :return: None / raises exception or sends the relevant message.
+        """
+
         if isinstance(exception, commands.MissingRole):
             await context.send('You are not allowed to use this command  🙅‍♂️  🚫')
         elif isinstance(exception, commands.CommandNotFound):
@@ -54,38 +123,36 @@ class Bot(basebot):
         elif isinstance(exception, commands.MissingRequiredArgument):
             await context.send(exception)
         else:
-            # original = getattr(exception, "original", exception)
-            putlog.exception(exception)
-            # raise original
-            # return
+            original = getattr(exception, "original", exception)
+            raise original
 
     async def on_error(self, event_method, *args, **kwargs):
         raise
 
-    async def on_disconnect(self):
-        putlog.error('Bot is disconnected...    DISCONNECTED!')
+    async def on_disconnect(self) -> None:
+        putlog.error('DemonBot is disconnected...    DISCONNECTED!')
 
-    async def on_member_join(self, member):
-        role = discord.utils.get(member.guild.roles, name=DEFAULT_ROLE)
-        await member.add_roles(role)
-
-    async def on_ready(self):
+    async def on_ready(self) -> None:
+        """
+        Sets the bot's status and logs the status of bot if it is online or not.
+        Sends message to "DM_RECIPIENT" when bot is online if DM_CONFIGS are configured in settings.py.
+        :return: None
+        """
         await bot.change_presence(
             activity=discord.Activity(type=configs.ACTIVITY_TYPE, name=configs.ACTIVITY_NAME))
-
         if not self.ready:
             self.ready = True
             self.setup()
-            if self.send_dm and self.on_ready_dm:
-                for dmuser in self.dm_users:
-                    assert isinstance(dmuser, int)
-                    owner = self.get_user(dmuser)
-                    await owner.send('Bot is Online...')
-                putlog.debug('Bot is online...       OK!')
-            else:
-                putlog.debug('Bot is online...       OK!')
+            if self.send_dm_authorization and self.on_connect_dm:
+                for user_id in self.dm_recipient:
+                    if isinstance(user_id, int):
+                        dm_user = bot.get_user(user_id)
+                        await dm_user.send(f'{self.bot_name} is online now...')
+
+            putlog.debug('DemonBot is online...       OK!')
+
         else:
-            putlog.warning('Bot is online...       RECONNECTING!')
+            putlog.warning('DemonBot is online...       RECONNECTING!')
 
 
-bot = Bot()
+bot = DemonBot()

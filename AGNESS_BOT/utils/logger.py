@@ -1,4 +1,5 @@
 from AGNESS_BOT import configs
+from .decorators import export
 import logging
 import sys
 
@@ -16,6 +17,7 @@ class CustomFormatter(logging.Formatter):
     White = "\033[0;37m"
     Bold_red = "\x1b[31;21m"
     reset = "\033[0m"
+    high_green = '\033[0;92m'
 
     format = '[%(levelname)s] - |%(asctime)s| - [%(name)s : LN : %(lineno)d] - %(message)s'
 
@@ -24,7 +26,8 @@ class CustomFormatter(logging.Formatter):
         logging.INFO: Green + format + reset,
         logging.WARNING: Yellow + format + reset,
         logging.ERROR: Red + format + reset,
-        logging.CRITICAL: Bold_red + format + reset
+        logging.CRITICAL: Bold_red + format + reset,
+
     }
 
     def format(self, record) -> str:
@@ -33,6 +36,7 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
+@export
 def get_custom_logger(name, level=logging.DEBUG, console=True):
     formatter = CustomFormatter()
 

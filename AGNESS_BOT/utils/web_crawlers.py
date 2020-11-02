@@ -2,11 +2,11 @@
 This module contains two web crawlers: One for scraping the results kof organic search of google and second is for wikipedia.
 """
 
-
 from bs4 import BeautifulSoup as bs
 import requests
 import json
 import os
+from .decorators import export
 
 cwd = os.getcwd()
 
@@ -65,6 +65,7 @@ class CacheManager:
             return 0
 
 
+@export
 class GoogleWebCrawler:
     """
     A web crawler for extracting the search results from google organic search results
@@ -134,7 +135,8 @@ class GoogleWebCrawler:
                         pass
                 if manage_cache:
                     if not self.cache_object.write_cache(self.query,
-                                                         (headings_content_dic, heading_link_dic, self.query_shortsummary),
+                                                         (headings_content_dic, heading_link_dic,
+                                                          self.query_shortsummary),
                                                          self.cache_dir):
                         print('Can not save cache file due to an error.')
                 return headings_content_dic, heading_link_dic
@@ -144,6 +146,7 @@ class GoogleWebCrawler:
             return self.cached_data
 
 
+@export
 class WikipediaCrawler:
     """ A Fast web crawler that fetches a topic on wikipedia """
 
@@ -193,14 +196,3 @@ class WikipediaCrawler:
                 return self.cached_data
         except Exception as error:
             return error
-
-
-if __name__ == '__main__':
-
-    f = GoogleWebCrawler('machine learning')
-    r = f.fetch_webpage(results=1, manage_cache=True)
-    heading = list(r[0].keys())[0]
-    content = list(r[0].values())[0]
-    link = list(r[1].values())[0]
-    c = f"This is what i found so far...\n{heading}\n{content}\n\n{link}"
-    print(c)

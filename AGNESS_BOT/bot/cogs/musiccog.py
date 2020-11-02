@@ -1,13 +1,28 @@
+"""
+NOTE : This project follows PEP 8 Styling Guide. If anything is not according to PEP 8, feel free to make it.
+
+This extension module is the whole brain of the music player.
+Music player uses Lavalink and wavelink to stream music.
+"""
+
 import discord
 import wavelink
 import typing as t
 import re
 import asyncio
 from discord.ext import commands
-from AGNESS_BOT.utils.embeds_utils import MusicEmbeds
-from AGNESS_BOT.utils.track_utils import scale_to_10
-from AGNESS_BOT import configs, logger
-from AGNESS_BOT.utils.custom_exceptions import (
+from AGNESS_BOT import (
+    configs,
+    logger,
+    MusicEmbeds,
+    scale_to_10,
+    Player,
+    RepeatMode,
+    check_valid_channel
+)
+
+# Custom exceptions
+from AGNESS_BOT import (
     AlreadyConnectedToChannel,
     NotVoiceChannel,
     QueueIsEmpty,
@@ -16,8 +31,6 @@ from AGNESS_BOT.utils.custom_exceptions import (
     NoPreviousTracks,
     InvalidRepeatMode,
 )
-from AGNESS_BOT.utils.music_utils import Player, RepeatMode
-from AGNESS_BOT.utils.decorators import check_valid_channel
 
 cooldown_warn = 0
 
@@ -48,12 +61,19 @@ debug_index = 1
 
 music_embeds = MusicEmbeds()
 
-URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|" \
+            r"(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+
 JUMP_REGEX = r"^([1-9]|10)$"
 SEEK_REGEX = r'^([-|+])|([1-9]|[1-5][0-9]|60)$'
 
 
 class Music(commands.Cog, wavelink.WavelinkMixin):
+    """
+    This is the main class contains commands for music player. Every settings for player is been configured in
+    Player command which is inherited from Player in utils.music_utils .
+    """
+
     def __init__(self, bot):
         self.bot = bot
         self.wavelink = wavelink.Client(bot=bot)
@@ -129,6 +149,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await self.wavelink.initiate_node(**node)
 
     async def remove_initial_connect_embed(self):
+        """
+        This method removes the gif/message sent first on joining the voice channel.
+        :return: None
+        """
+
         if self.initial_connect_embed:
             await self.initial_connect_embed.delete()
             self.initial_connect_embed = None
@@ -171,6 +196,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         )
         self.initial_connect_embed = await ctx.send(embed=embed)
         await player.set_volume(DEFAULT_VOLUME)
+        putlog.info('Bot has joined the voice channel.')
 
     @commands.command(name='disconnect', aliases=['leave', 'lv'])
     @check_valid_channel
@@ -202,11 +228,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await asyncio.sleep(BOT_LEAVE_CHANNEL_DELAY)  # After 10 seconds, bot will be removed
             if not [m for m in before.channel.members if not m.bot]:
                 putlog.warning(
-                    f'No human is in voice channel. Bot will leave the channel after : {BOT_LEAVE_CHANNEL_DELAY}s')
+                    f'No human is in voice channel. DemonBot will leave the channel after : {BOT_LEAVE_CHANNEL_DELAY}s')
                 await self.remove_initial_connect_embed()
                 await self.get_player(member.guild).delete_now_playing_embed()
                 await self.get_player(member.guild).teardown()
-                putlog.warning(f'Bot left channel after {BOT_LEAVE_CHANNEL_DELAY}s coz no human was in there.')
+                putlog.warning(f'DemonBot left channel after {BOT_LEAVE_CHANNEL_DELAY}s coz no human was in there.')
 
     @wavelink.WavelinkMixin.listener('on_track_stuck')
     @wavelink.WavelinkMixin.listener('on_track_end')
@@ -284,6 +310,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                     query = self.set_search_engine(query)  # search by song name
                 else:
                     if self.cooldown_tries >= 2 and not self.cooldown_lock:
+                        await ctx.send(f'Making rapid requests by link may crash the system. Catch a breadth, and try '
+                                       f'aging in {self.cooldown} secs, results may not be disappointing.')
                         putlog.warning(
                             f'Cooldown lock acquired! waiting for {self.cooldown} seconds to release the lock.')
                         self.cooldown_lock = True
@@ -296,8 +324,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                     songs_found = await self.wavelink.get_tracks(query)
                     await player.add_tracks(ctx, songs_found)
                 else:
-                    await ctx.send(f'Making rapid requests by link may crash the system. Catch a breadth, and try '
-                                   f'aging in {self.cooldown} secs, results may not be disappointing.')
+
                     putlog.debug(
                         f'Link requested even after cooldown timer,'
                         f' cooldown tries is : {self.cooldown_tries}, cooldown lock is {self.cooldown_lock}')
@@ -497,20 +524,19 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def information_command(self, ctx):
         player = self.get_player(ctx)
         current_pos = player.queue.position
-        current_track = player.queue.current_track
-        current_track_index = player.queue.track_index(current_track)
+        current_track = player.queue.current_track.title
+        current_track_index = player.queue.track_index(player.queue.current_track)
         requester = player.song_and_requester.get(current_track.title, '')
         repeat_mode = player.queue.repeat_mode
         current_vol = self.current_volume
         max_vol = MAX_VOLUME
         songs = player.queue.all_tracks[:10]
-        upcoming_song = player.queue.upcoming[:1]
 
         await ctx.send(
             embed=music_embeds.show_player_info(
                 current_pos, current_track, current_track_index,
                 requester, repeat_mode, current_vol, max_vol,
-                songs, upcoming_song
+                songs
             )
         )
 
@@ -536,15 +562,26 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await player.connect(ctx)
         await ctx.send('Rejoined guild!, lets play now.')
 
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, exc):
+        """
+        Local exception handling for Music cog.
+
+        :param ctx: Passed by discord.
+        :param exc: Exception
+        :return: None / handles exception
+        """
+
+        if isinstance(exc, commands.CheckFailure):
+            await ctx.send(f'This command is made for {self.music_channel.mention}')
+        elif isinstance(exc, QueueIsEmpty):
+            await ctx.send(f'Queue is empty')
+
     # Exception handling for Play command =============================================================================
     # Exception handling for next_command =============================================================================
     # Exception handling for previous_command =========================================================================
     # Exception handling for pause_command ============================================================================
     # Exception handling for shuffle_command ==========================================================================
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, exc):
-        if isinstance(exc, commands.CheckFailure):
-            await ctx.send(f'This command is made for {self.music_channel.mention}')
 
     @connect_command.error
     async def connect_command_error(self, ctx, exc):
@@ -595,11 +632,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send("The queue is currently empty. Add some songs by ```.p <song name>``` ✌ 🥳")
 
 
-
 def setup(bot):
     bot.add_cog(Music(bot))
 
 
 """
-Something is wrong with the pointer 
+There is still a bug with Youtube search and youtube links. X_X
 """
