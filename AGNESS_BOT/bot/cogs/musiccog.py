@@ -142,7 +142,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 "rest_uri": REST_URI,
                 "password": MUSIC_SERVER_PW,
                 "identifier": 'MAIN ',
-                "region": MUSIC_SERVER_REGION
+                "region": MUSIC_SERVER_REGION,
+                "heartbeat": 10
             }
         }
         for node in nodes.values():
@@ -178,13 +179,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @commands.command(name='connect', aliases=['join', 'jvc'])
     @check_valid_channel
-    @check_valid_channel
     async def connect_command(self, ctx, *, channel: t.Optional[discord.VoiceChannel]):
         """
         :param ctx: context passed by DC command
         :param channel: An optional argument to pass discord channel.
         :return: None
         """
+
         player = self.get_player(ctx)
         channel = await player.connect(ctx, channel)
 
@@ -308,26 +309,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 if not re.match(URL_REGEX, query):
                     putlog.debug('Query is song name. NOT A LINK')
                     query = self.set_search_engine(query)  # search by song name
-                else:
-                    if self.cooldown_tries >= 2 and not self.cooldown_lock:
-                        await ctx.send(f'Making rapid requests by link may crash the system. Catch a breadth, and try '
-                                       f'aging in {self.cooldown} secs, results may not be disappointing.')
-                        putlog.warning(
-                            f'Cooldown lock acquired! waiting for {self.cooldown} seconds to release the lock.')
-                        self.cooldown_lock = True
-                        await self.manage_cooldown(ctx)
-                    putlog.debug('Query is a link')
-                    self.cooldown_tries += 1
 
-                if not self.cooldown_lock:
-                    putlog.debug('Adding Search results in queue')
-                    songs_found = await self.wavelink.get_tracks(query)
-                    await player.add_tracks(ctx, songs_found)
-                else:
-
-                    putlog.debug(
-                        f'Link requested even after cooldown timer,'
-                        f' cooldown tries is : {self.cooldown_tries}, cooldown lock is {self.cooldown_lock}')
+                songs_found = await self.wavelink.get_tracks(query)
+                await player.add_tracks(ctx, songs_found)
 
         # ----------------------------------------------------------------------
 
@@ -399,6 +383,31 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player.queue.position -= 2
         await player.stop()
         await ctx.send('Playing previous track in queue.  ⏮')
+
+    @commands.command(name='remove', aliases=['rm'])
+    @check_valid_channel
+    async def remove_command(self, ctx, ind: str):
+        putlog.debug(f"Track remove request receive. Index specified : {ind}")
+        try:
+            ind = int(ind)
+            player = self.get_player(ctx)
+            track_to_remove = player.queue.get_track_by_index(ind)
+
+            if ind == player.queue.position:
+                putlog.debug("Remove index was equal to current playing song. Stopping the player, playing next"
+                             " and removing song")
+                await player.stop()
+                await ctx.send(f"Track removed : {track_to_remove.title}")
+                player.queue.remove_track_by_index(ind)
+                return
+
+            if player.queue.remove_track_by_index(ind):
+                await ctx.send(f"Track removed : {track_to_remove.title}")
+            else:
+                await ctx.send('There was some problem removing this track.r')
+
+        except ValueError:
+            await ctx.send('Please specify the index of song you want to remove as integer number.')
 
     @commands.command(name='seek', aliases=['sk'])
     @check_valid_channel
@@ -500,11 +509,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if player.queue.is_empty:
             raise QueueIsEmpty
 
-        all_songs = "\n\n".join(
-            [f"{i + 1} -> {song.title}" for i, song in enumerate(player.queue.all_tracks)][:show]
-        )
-        currently_playing = f'🔊 {getattr(player.queue.current_track, "title", "No tracks currently playing.")}'
+        all_songs = player.queue.all_tracks[:show]
+        currently_playing = player.queue.current_track.title
         upcoming_song = player.queue.upcoming
+        total_duration = player.queue.total_duration
 
         # Show Playlist
         await ctx.send(
@@ -515,8 +523,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 showlimit=show,
                 requester=ctx.author.display_name,
                 requester_icon=ctx.author.avatar_url,
-                color=ctx.author.color
-            )
+                color=ctx.author.color,
+                total_duration=total_duration
+            )  # Accepts kwargs
         )
 
     @commands.command(name='information', aliases=['info'])

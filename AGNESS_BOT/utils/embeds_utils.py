@@ -1,6 +1,7 @@
 import discord
 from AGNESS_BOT import configs
-from . decorators import export
+from .track_utils import show_track_duration
+from .decorators import export
 import datetime as dt
 
 COMMAND_PREFIX = configs.COMMAND_PREFIX
@@ -41,7 +42,7 @@ class MusicEmbeds:
         )
         embed.add_field(
             name="Songs snap (upto 10 only...)",
-            value='\n'.join([f"**{i+1} ->** {t}" for i,t in enumerate(tracks)]),
+            value='\n'.join([f"**{i + 1} ->** {t}" for i, t in enumerate(tracks)]),
             inline=False
         )
         return embed
@@ -85,14 +86,23 @@ class MusicEmbeds:
     @staticmethod
     def show_playlist(all_songs, currently_playing, upcoming_songs, showlimit, **kwargs):
         embed = discord.Embed(
-            title=f'Song Queue...  🎧',
-            description=f'Showing up to next {showlimit} tracks',
+            title=f'🎧 Song Queue...',
+            description=f'*Showing up to next {showlimit} tracks.*',
             colour=kwargs['color'],
             timestamp=dt.datetime.utcnow()
         )
-        embed.set_author(name="")
-        embed.add_field(name='All Songs  🎶',
-                        value=all_songs,
+        embed.add_field(
+            name='Total Duration : ',
+            value=f'Approx : {kwargs["total_duration"]} mins.',
+            inline=False
+        )
+        embed.add_field(name='🎶 All Songs',
+                        value="\n\n".join(
+                            [
+                                f"{i + 1} -> {song.title}\n{show_track_duration(song.length)}"
+                                for i, song in enumerate(all_songs)
+                            ]
+                        ),
                         inline=False)
         embed.set_footer(
             text=f"Requested by {kwargs['requester']}",
@@ -100,7 +110,7 @@ class MusicEmbeds:
         )
         embed.add_field(
             name="Currently playing ",
-            value=f"{currently_playing}\n",
+            value=f"🔊 {currently_playing}\n",
             inline=False
         )
         if upcoming_songs:
@@ -113,17 +123,19 @@ class MusicEmbeds:
         return embed
 
     @staticmethod
-    def now_playing(track, display_name, icon, clr=discord.Color.blurple(), thumb=None):
+    def now_playing(track, display_name, icon, info, clr=discord.Color.blurple(), thumb=None):
         embed = discord.Embed(
-            description=f"🔊 {track}",
+            description=f"🔊 [{track}]({info.get('uri', '')})",
             colour=clr,
-            timestamp=dt.datetime.utcnow()
+            timestamp=dt.datetime.utcnow(),
         )
-        embed.set_image(url=NOW_PLAYING_GIF_URL)
         embed.set_author(name="Now Playing 🎵 . . .")
         embed.set_footer(text=f'Requested by {display_name}', icon_url=icon)
         if thumb:
-            embed.set_thumbnail(url=thumb)
+            embed.set_thumbnail(url=NOW_PLAYING_GIF_URL)
+            embed.set_image(url=thumb)
+        else:
+            embed.set_image(url=NOW_PLAYING_GIF_URL)
 
         return embed
 
@@ -143,6 +155,73 @@ class MusicEmbeds:
     @staticmethod
     def show_info():
         ...
+
+
+@export
+class InsigniaEmbeds:
+    def __init__(self):
+        self.status_level = {
+            1: 'Rookie',
+            2: 'GrandRookie',
+            3: 'Veteran',
+            4: 'Veteran I',
+            5: 'Veteran II',
+            6: 'Veteran III',
+            7: 'Veteran IV',
+            8: 'Veteran V',
+            9: 'Diamond X',
+            10: 'Ace'
+        }
+
+    def get_my_insignia(self, caller, avatar, color, level=1):
+        embed = discord.Embed(
+            title=f"{caller}'s Insignia 💠",
+            description=f'Hey {caller}! You are doing great. You are currently on **{self.status_level[level]}**',
+            timestamp=dt.datetime.utcnow(),
+            color=color
+        )
+        embed.add_field(
+            name='Name:',
+            value=f'{caller}',
+            inline=False,
+        )
+        embed.add_field(
+            name='Level:',
+            value=f'Your current level is : **{self.status_level[level]}** 👑',
+            inline=False,
+        )
+        embed.set_thumbnail(url=avatar)
+        embed.set_footer(text=f"{caller}'s", icon_url=avatar)
+
+        return embed
+
+
+@export
+class EventEmbeds:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def member_join(member):
+        embed = discord.Embed(
+            title=f'Welcome {member.display_name}! 😃',
+            description='Dont forget to read the rules. Have fun ✌',
+            color=member.color,
+            timestamp=dt.datetime.utcnow()
+        )
+        embed.set_footer(text=f'Powered by : {BOT_NAME}')
+        return embed
+
+    @staticmethod
+    def member_left(member):
+        embed = discord.Embed(
+            title=f'Goodbye {member.display_name}... 👋',
+            description='It was fun having you around!',
+            color=member.color,
+            timestamp=dt.datetime.utcnow()
+        )
+        embed.set_footer(text=f'Powered by : {BOT_NAME}')
+        return embed
 
 
 @export

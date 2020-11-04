@@ -8,8 +8,10 @@ from .decorators import (
     NoTracksFound,
     export
 )
+from .track_utils import true_duration_in_mins
 from AGNESS_BOT import (
     NotVoiceChannel,
+    InvalidRemoveIndex,
     QueueIsEmpty,
     NotInQueue,
     MusicEmbeds,
@@ -39,10 +41,16 @@ class Queue:
         self.__queue = list()
         self.position = 0
         self.repeat_mode = RepeatMode.NONE
+        self.total_duration = 0
 
     @property
     def is_empty(self):
         return not self.__queue
+
+    @property
+    def queue_duration(self):
+        mins = self.total_duration
+        return int(mins)
 
     @property
     @check_empty_queue
@@ -85,6 +93,7 @@ class Queue:
 
     def add(self, *args):
         self.__queue.extend(args)
+        self.manage_track_durations(*args)  # Unpack the args
         putlog.info(f'Song added!   len of queue is : {len(self.__queue)} Pointer is : {self.position}')
 
     def empty(self):
@@ -115,6 +124,24 @@ class Queue:
             return None
         self.position += ind - 1
         return self.__queue[ind - 1]
+
+    def manage_track_durations(self, *tracks, operation='add'):
+        for track in tracks:
+            if operation == 'add':
+                self.total_duration += true_duration_in_mins(track.duration)
+            elif operation == 'subtract':
+                self.total_duration -= true_duration_in_mins(track.duration)
+
+    @check_empty_queue
+    def remove_track_by_index(self, ind: int):
+        if ind not in range(1, len(self.__queue)+1):
+            raise InvalidRemoveIndex
+
+        ind = ind - 1  # Decrement one to match queue ordering from 0.
+        self.manage_track_durations(self.get_track_by_index(ind), operation='subtract')  # Subtract the removed length
+        self.__queue.pop(ind)
+        putlog.warning(f"Track at index {ind} removed from queue. Current pointer is : {self.position}")
+        return True
 
     def set_repeat_mode(self, mode: str) -> None:
         if mode == 'none':
@@ -150,6 +177,7 @@ class Player(wavelink.Player):
 
     async def teardown(self):
         try:
+            await self.disconnect()
             await self.destroy()
         except KeyError:
             pass
@@ -296,6 +324,7 @@ class Player(wavelink.Player):
             ctx.author.display_name,
             ctx.author.avatar_url,
             clr=ctx.author.color,
+            info=track.info,
             thumb=track.thumb
         )
         self.nowPlaying = await ctx.send(embed=now_playing)

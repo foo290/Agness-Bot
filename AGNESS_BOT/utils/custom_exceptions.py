@@ -41,6 +41,10 @@ class NotInQueue(commands.CommandError):
     pass
 
 
+class InvalidRemoveIndex(commands.CommandError):
+    pass
+
+
 __all__ = [
     "AlreadyConnectedToChannel",
     "NotVoiceChannel",
@@ -52,4 +56,5 @@ __all__ = [
     "NoPreviousTracks",
     "InvalidRepeatMode",
     "NotInQueue",
+    "InvalidRemoveIndex",
 ]

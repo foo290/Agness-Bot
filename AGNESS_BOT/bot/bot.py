@@ -10,7 +10,7 @@ configs (imported) is a dict containing every config defined in settings.py and 
 from discord.ext.commands import Bot
 from discord.ext import commands
 import discord
-from AGNESS_BOT import configs, logger
+from AGNESS_BOT import configs, logger, EventEmbeds
 
 putlog = logger.get_custom_logger(__name__)
 
@@ -72,12 +72,24 @@ class DemonBot(Bot):
         await member.add_roles(role)
         putlog.info(f"{member} has assigned with {role} role.")
 
+        channel = self.get_channel(773203865151602729)
+        rules_channel = self.get_channel(773219713026621490)
+
+        if not member.bot:
+            await channel.send(f'{member.mention} just arrived! ♥ Welcome to {member.guild.name} 😀 \n'
+                               f'Lets make you familiar with rules : '
+                               f'{rules_channel.mention}')
+            await channel.send(embed=EventEmbeds().member_join(member))
+
     async def on_member_remove(self, member) -> None:
         """
         Events that should take place when a user is either kicked, or left the server.
         :param member: Passed by discord, the member related to the event.
         :return: None
         """
+        channel = self.get_channel(773208141616906251)
+        if not member.bot:
+            await channel.send(embed=EventEmbeds().member_left(member))
 
         putlog.info(f"{member} has left the server")
 

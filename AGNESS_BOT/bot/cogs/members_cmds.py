@@ -10,7 +10,8 @@ from AGNESS_BOT import (
     configs,
     get_reminder_embeds,
     calculate_time,
-    GoogleWebCrawler
+    GoogleWebCrawler,
+    InsigniaEmbeds
 )
 
 DEFAULT_ROLE = configs.DEFAULT_ROLE
@@ -124,6 +125,25 @@ class Members(commands.Cog):
         await ctx.send(
             f"{c}"
         )
+
+    @commands.command(name='myinsignia')
+    async def show_insignia(self, ctx):
+        """
+        This method is to show user's information thru embeds
+        :param ctx: Passed by discord.
+        :return: None.
+        """
+
+        author = ctx.author
+        author_name = author.display_name
+        author_avatar = author.avatar_url
+        author_color = author.color
+        author_level = 10
+
+        embed = InsigniaEmbeds().get_my_insignia(
+            author_name, author_avatar, author_color, author_level
+        )
+        await ctx.send(embed=embed)
 
 
 def setup(client):
