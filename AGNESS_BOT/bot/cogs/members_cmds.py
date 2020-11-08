@@ -11,8 +11,11 @@ from AGNESS_BOT import (
     get_reminder_embeds,
     calculate_time,
     GoogleWebCrawler,
-    InsigniaEmbeds
+    InsigniaEmbeds,
+    SillyCommands
 )
+from typing import Union
+import discord
 
 DEFAULT_ROLE = configs.DEFAULT_ROLE
 
@@ -144,6 +147,26 @@ class Members(commands.Cog):
             author_name, author_avatar, author_color, author_level
         )
         await ctx.send(embed=embed)
+
+    @commands.command(name='slap')
+    async def slap_command(self, ctx, member: Union[discord.Member, str]):
+        await ctx.send(
+            embed=SillyCommands().slap_member(
+                ctx.author,
+                member, ctx.author.color
+            )
+        )
+
+    @commands.command(name='pet')
+    async def slap_command(self, ctx, member: Union[discord.Member, str]):
+        await ctx.send(
+            embed=SillyCommands().pet_member(
+                ctx.author,
+                member, ctx.author.color
+            )
+        )
+
+
 
 
 def setup(client):

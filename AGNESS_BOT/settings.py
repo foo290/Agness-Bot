@@ -58,6 +58,15 @@ CHAT_CONFIGS = {
     'HOT_WORD': "hey agness"
 }
 
+#
+FUNCTIONALITIES = {
+    'MANAGE_BOOT_DM': True,
+    'MANAGE_NEW_JOINING': True,
+    'MANAGE_MEMBER_LEFT': True,
+    'MANAGE_MUSIC': True,
+    'MANAGE_MODERATION': True
+}
+
 # This is currently configured to get a dm by bot when bot is online.
 DM_CONFIGS = {
     'DM_RECIPIENT': [OWNER_IDS['Nitin']],
@@ -79,7 +88,11 @@ COMMAND_ALIASES = {
     ],
 }
 
-# This bot uses Wavelink wrapper for lavalink server.
+MUSIC_PLAYER_CONFIGS = {
+    'DEFAULT_VOLUME': 50,
+    'MAX_VOLUME': 100
+}
+
 MUSIC_SERVER_CONFIGS = {
     'MUSIC_HOST': "lava-link-server.herokuapp.com",
     'MUSIC_PORT': 80,
@@ -89,17 +102,16 @@ MUSIC_SERVER_CONFIGS = {
     'MUSIC_SEARCH_ENGINE': "soundcloud",
 }
 
-MUSIC_PLAYER_CONFIGS = {
-    'DEFAULT_VOLUME': 50,
-    'MAX_VOLUME': 100
-}
-
 MUSIC_CHANNEL_CONFIGS = {
     'RESTRICT_CMDS_TO_MUSIC_CHANNEL': True,
     'MUSIC_CMD_CHANNEL': 769254977863417887,
-    'BOT_LEAVE_DELAY': 5,
+    'BOT_LEAVE_DELAY': 10,
     'NOW_PLAYING_GIF_URL': r"https://i.pinimg.com/originals/64/53/24/645324641a0555cc55cea87787fc0bcb.gif",
     'INITIAL_CONNECT_GIF_URL': r"https://i.gifer.com/7d20.gif",
+}
+
+PLAYER_UTILITIES_CONFIGS = {
+    'PAGINATION_LIMIT': 10,
 }
 
 LOGGING = {
@@ -115,5 +127,6 @@ configs = Config(
     ROLE_ALIASES,
     MUSIC_SERVER_CONFIGS,
     MUSIC_PLAYER_CONFIGS,
-    MUSIC_CHANNEL_CONFIGS
+    MUSIC_CHANNEL_CONFIGS,
+    PLAYER_UTILITIES_CONFIGS
 )

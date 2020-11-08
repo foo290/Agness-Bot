@@ -30,6 +30,7 @@ from AGNESS_BOT import (
     NoMoreTracks,
     NoPreviousTracks,
     InvalidRepeatMode,
+    paginate
 )
 
 cooldown_warn = 0
@@ -46,6 +47,7 @@ MUSIC_SERVER_REGION = configs.MUSIC_SERVER_REGION
 MUSIC_SEARCH_ENGINE = configs.MUSIC_SEARCH_ENGINE
 BOT_LEAVE_CHANNEL_DELAY = configs.BOT_LEAVE_DELAY
 MUSIC_CHANNEL = configs.MUSIC_CMD_CHANNEL
+PAGINATION_LIMIT = configs.PAGINATION_LIMIT
 
 MUSIC_SEARCH_ENGINE = MUSIC_SEARCH_ENGINE.lower()
 
@@ -64,7 +66,7 @@ music_embeds = MusicEmbeds()
 URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|" \
             r"(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 
-JUMP_REGEX = r"^([1-9]|10)$"
+JUMP_REGEX = r"^([1-9][0-9]{0,2}|1000)$"
 SEEK_REGEX = r'^([-|+])|([1-9]|[1-5][0-9]|60)$'
 
 
@@ -299,10 +301,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             putlog.debug(f'Query is {query}')
             if self.check_query_or_jump(query):  # Jump tracks by number (index)
                 putlog.debug('validating command if it is a song jump or another query.')
-                self.song_index = int(query)
-                await player.stop()  # Gives control to >> on_player_stop()
-                putlog.debug(f'Jump index set to {self.song_index},'
-                             f' Playback stopped and control passed to on_player_stop() method.')
+                if int(query) in range(1, player.queue.length + 1):
+                    self.song_index = int(query)
+                    await player.stop()  # Gives control to >> on_player_stop()
+                    putlog.debug(f'Jump index set to {self.song_index},'
+                                 f' Playback stopped and control passed to on_player_stop() method.')
+                else:
+                    await ctx.send('Index given is not in range of playlist! 🙄 🙁')
             else:
                 putlog.debug('Query was not a song jump. now checking if query is a link')
                 query = query.strip("<>")  # search by link
@@ -500,16 +505,15 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @commands.command(name='queue', aliases=['playlist', 'plylst', 'plst', 'pl'])
     @check_valid_channel
-    async def queue_command(self, ctx, show: t.Optional[int] = 10):
+    async def queue_command(self, ctx, page_stride: t.Optional[int] = 1):
         player = self.get_player(ctx)
-        if show > 20:
-            await ctx.send('Only 20 songs can be shown in embed!')
-            return
+        all_songs = list(paginate(player.queue.all_tracks, PAGINATION_LIMIT))
 
         if player.queue.is_empty:
             raise QueueIsEmpty
-
-        all_songs = player.queue.all_tracks[:show]
+        if page_stride > len(all_songs):
+            await ctx.send('That Page is not available...')
+            return
         currently_playing = player.queue.current_track.title
         upcoming_song = player.queue.upcoming
         total_duration = player.queue.total_duration
@@ -520,11 +524,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 all_songs,
                 currently_playing,
                 upcoming_song,
-                showlimit=show,
                 requester=ctx.author.display_name,
                 requester_icon=ctx.author.avatar_url,
                 color=ctx.author.color,
-                total_duration=total_duration
+                total_duration=total_duration,
+                page_stride=page_stride,
+                full_playlist=player.queue.all_tracks,
+                playlist_length=player.queue.length
             )  # Accepts kwargs
         )
 
@@ -645,6 +651,3 @@ def setup(bot):
     bot.add_cog(Music(bot))
 
 
-"""
-There is still a bug with Youtube search and youtube links. X_X
-"""

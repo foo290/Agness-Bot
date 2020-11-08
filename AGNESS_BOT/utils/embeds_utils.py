@@ -84,28 +84,29 @@ class MusicEmbeds:
         return embed
 
     @staticmethod
-    def show_playlist(all_songs, currently_playing, upcoming_songs, showlimit, **kwargs):
+    def show_playlist(all_songs, currently_playing, upcoming_songs, showlimit=5, **kwargs):
+        playlist_page = kwargs['page_stride']-1
+        without_paginated = kwargs.get('full_playlist', [])
+
         embed = discord.Embed(
             title=f'🎧 Song Queue...',
-            description=f'*Showing up to next {showlimit} tracks.*',
+            description=f'*Current Playlist* 🎵\n\n'
+                        f'**Total Songs** : {kwargs.get("playlist_length", "N/A")}\n'
+                        f'**Total Duration** : {kwargs["total_duration"]} mins.*\n',
             colour=kwargs['color'],
             timestamp=dt.datetime.utcnow()
         )
-        embed.add_field(
-            name='Total Duration : ',
-            value=f'Approx : {kwargs["total_duration"]} mins.',
-            inline=False
-        )
         embed.add_field(name='🎶 All Songs',
-                        value="\n\n".join(
+                        value="\n".join(
                             [
-                                f"{i + 1} -> {song.title}\n{show_track_duration(song.length)}"
-                                for i, song in enumerate(all_songs)
+                                f"**{without_paginated.index(song) + 1}** -> ***{song.title}*** 🎶\n"
+                                f"```Duration : {show_track_duration(song.length)}```"
+                                for song in all_songs[playlist_page]
                             ]
                         ),
                         inline=False)
         embed.set_footer(
-            text=f"Requested by {kwargs['requester']}",
+            text=f"Page : {playlist_page+1} of {len(all_songs)}",
             icon_url=kwargs['requester_icon']
         )
         embed.add_field(
@@ -123,13 +124,14 @@ class MusicEmbeds:
         return embed
 
     @staticmethod
-    def now_playing(track, display_name, icon, info, clr=discord.Color.blurple(), thumb=None):
+    def now_playing(track, display_name, icon, info, clr=discord.Color.blurple(), thumb=None, **kwargs):
         embed = discord.Embed(
-            description=f"🔊 [{track}]({info.get('uri', '')})",
+            title="Now Playing 🎵 . . .",
+            description=f"🔊 [{track}]({info.get('uri', '')})\n\n"
+                        f"```Playing {kwargs.get('current_song_index')+1} of {kwargs.get('total_length')} songs.```",
             colour=clr,
             timestamp=dt.datetime.utcnow(),
         )
-        embed.set_author(name="Now Playing 🎵 . . .")
         embed.set_footer(text=f'Requested by {display_name}', icon_url=icon)
         if thumb:
             embed.set_thumbnail(url=NOW_PLAYING_GIF_URL)
@@ -193,6 +195,30 @@ class InsigniaEmbeds:
         embed.set_thumbnail(url=avatar)
         embed.set_footer(text=f"{caller}'s", icon_url=avatar)
 
+        return embed
+
+
+@export
+class SillyCommands:
+    def __init__(self):
+        pass
+
+    def slap_member(self, attacker, target, color):
+        embed = discord.Embed(
+            title="Slaaapppp!...",
+            description=f'{target.mention} got slapped by {attacker.mention}',
+            color=color
+        )
+        embed.set_image(url=r'https://firebasestorage.googleapis.com/v0/b/myportfolio-366ad.appspot.com/o/discord-dependencies%2Foneslap-man.gif?alt=media&token=08be9a03-fb61-47bb-b5aa-f782b3269158')
+        return embed
+
+    def pet_member(self, attacker, target, color):
+        embed = discord.Embed(
+            description=f'{attacker.mention} pets {target.mention}',
+            color=color
+        )
+        embed.set_image(
+            url=r'https://firebasestorage.googleapis.com/v0/b/myportfolio-366ad.appspot.com/o/discord-dependencies%2Fpat_008.gif?alt=media&token=04783e71-75af-4a52-8009-2b26c9c5ab8c')
         return embed
 
 
@@ -463,3 +489,4 @@ def custom_help_cmd(user_type='admin', client=None):
         gb_hlp.add_field(name='Commands    : ', value=v)
 
         return gb_hlp
+

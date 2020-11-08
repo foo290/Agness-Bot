@@ -2,6 +2,7 @@ import enum
 import wavelink
 import asyncio
 import random
+import itertools
 from .decorators import (
     check_empty_queue,
     check_connected_to_channel,
@@ -42,6 +43,7 @@ class Queue:
         self.position = 0
         self.repeat_mode = RepeatMode.NONE
         self.total_duration = 0
+        self.length_of_queue = 0
 
     @property
     def is_empty(self):
@@ -120,9 +122,9 @@ class Queue:
     def get_track_by_index(self, ind):
         if not self.__queue:
             return None
-        if ind > len(self.__queue):
+        if ind > self.length:
             return None
-        self.position += ind - 1
+        self.position = ind - 1
         return self.__queue[ind - 1]
 
     def manage_track_durations(self, *tracks, operation='add'):
@@ -134,7 +136,7 @@ class Queue:
 
     @check_empty_queue
     def remove_track_by_index(self, ind: int):
-        if ind not in range(1, len(self.__queue)+1):
+        if ind not in range(1, len(self.__queue) + 1):
             raise InvalidRemoveIndex
 
         ind = ind - 1  # Decrement one to match queue ordering from 0.
@@ -192,14 +194,15 @@ class Player(wavelink.Player):
             for track in tracks.tracks:
                 self.song_and_requester[track.title] = ctx  # ----> Set requester for each song in playlist.
             self.queue.add(*tracks.tracks)
-            await ctx.send('Your playlist added in queue successfully! Keep the party going...🎉 🥳')
+            await ctx.send(f'{self.queue.length} songs of your playlist added in queue successfully!'
+                           f' Keep the party going...🎉 🥳')
         elif len(tracks) == 1:
             putlog.debug('Only one track found. Adding it in queue.')
             self.queue.add(tracks[0])
             self.song_and_requester[tracks[0].title] = ctx  # ----> Set requester and song name
             await ctx.send(
                 f"Only one song found for given name but anyway, I added it in queue. Keep ROckinG the party  🎊 🥳 🎉")
-            await ctx.send(f"✅ Added {tracks[0].title} to the queue")
+            await ctx.send(f"✅ Added {tracks[0].title} to the queue at Position : {self.queue.track_index(tracks[0])+1}")
         else:
             putlog.debug('Multiple songs found. Asking user to choose which one to put in queue.')
             track = await self.choose_track(ctx, tracks)  # Show option to choose from tracks
@@ -262,7 +265,7 @@ class Player(wavelink.Player):
                 putlog.debug(
                     f'Song is requested by Number. Given no. : {song_index}, Playlist length : '
                     f'{len(self.queue.all_tracks)}')
-                if song_index - 1 > len(self.queue.all_tracks):
+                if song_index > self.queue.length:
                     putlog.debug('Requested number of song is not in playlist.  NotInQueue!')
                     await self.sender.send('Requested number of song is not in playlist.')
                     raise NotInQueue
@@ -325,13 +328,23 @@ class Player(wavelink.Player):
             ctx.author.avatar_url,
             clr=ctx.author.color,
             info=track.info,
-            thumb=track.thumb
+            thumb=track.thumb,
+            total_length=self.queue.length,
+            current_song_index=self.queue.track_index(track)
         )
         self.nowPlaying = await ctx.send(embed=now_playing)
 
 
+@export
+def paginate(iterable, page_size):
+    while True:
+        i1, i2 = itertools.tee(iterable)
+        iterable, page = (itertools.islice(i1, page_size, None),
+                          list(itertools.islice(i2, page_size)))
+        if len(page) == 0:
+            break
+        yield page
+
+
 if __name__ == '__main__':
-    obj = Queue()
-    obj.add((1, 2, 3, 4))
-    # print(dir(obj))
-    print(obj.first_track)
+    print(paginate(list(range(24)), 10))
