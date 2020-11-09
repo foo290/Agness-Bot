@@ -48,15 +48,18 @@ class MusicEmbeds:
         return embed
 
     @staticmethod
-    def track_added(track, position, addedby, icon, color):
+    def track_added(track, position, addedby, icon, color, search_engine=None):
         embed = discord.Embed(
             title='Track Added! ✅ ',
             description='A new track is added in queue... 🎧',
             color=color,
             timestamp=dt.datetime.utcnow()
         )
-        embed.add_field(name='Track Name :', value=f"🎶 {track.title}", inline=False)
-        embed.add_field(name='Added at Position : ', value=position)
+        embed.add_field(name='Track Name :', value=f"🎶 [{track.title}]({track.info.get('uri', '')})", inline=False)
+        embed.add_field(name='Added at : ', value=position)
+        embed.add_field(name='Duration :', value=f'{show_track_duration(track.length)}')
+        if search_engine:
+            embed.add_field(name='Found on : ', value=f"{search_engine}")
         thumbnail = track.thumb
         if thumbnail:
             embed.set_thumbnail(url=thumbnail)
@@ -65,59 +68,67 @@ class MusicEmbeds:
         return embed
 
     @staticmethod
-    def choose_track_embed(ctx, tracks, show_limit=5):
+    def choose_track_embed(ctx, tracks, search_engine=None, show_limit=5):
         embed = discord.Embed(
-            title='Choose a song by clicking on reactions below.',
+            title=f'{search_engine}',
             description=(
                 "\n\n".join(
-                    f"**{i + 1}.** {_t.title} ({_t.length // 60000}:{str(_t.length % 60).zfill(2)})"
-                    for i, _t in enumerate(tracks[:show_limit]
-                                           )
+                    f"**{i + 1}.** [{_t.title}]({_t.info.get('uri', '')}) ({show_track_duration(_t.length)})"
+                    for i, _t in enumerate(tracks[:show_limit])
                 )
             ),
             color=ctx.author.color,
             timestamp=dt.datetime.utcnow()
         )
-        embed.set_author(name='Songs Found!  🎼')
         embed.set_footer(text=f'Invoked by {ctx.author.display_name}', icon_url=ctx.author.avatar_url)
 
         return embed
 
     @staticmethod
     def show_playlist(all_songs, currently_playing, upcoming_songs, showlimit=5, **kwargs):
-        playlist_page = kwargs['page_stride']-1
+        playlist_page = kwargs['page_stride'] - 1
         without_paginated = kwargs.get('full_playlist', [])
 
         embed = discord.Embed(
-            title=f'🎧 Song Queue...',
-            description=f'*Current Playlist* 🎵\n\n'
-                        f'**Total Songs** : {kwargs.get("playlist_length", "N/A")}\n'
-                        f'**Total Duration** : {kwargs["total_duration"]} mins.*\n',
+            title=f'🎵 Song Queue...',
+            description=f'*Current Playlist* 🎵\n\n',
+            # f'**Total Songs** : \n'
+            # f'**Total Duration** : \n',
             colour=kwargs['color'],
             timestamp=dt.datetime.utcnow()
+        )
+        embed.add_field(
+            name='Total Songs :',
+            value=f'Song Count : {kwargs.get("playlist_length", "N/A")}'
+        )
+        embed.add_field(
+            name='Total Duration :',
+            value=f'Approx : {kwargs["total_duration"]} mins.'
         )
         embed.add_field(name='🎶 All Songs',
                         value="\n".join(
                             [
-                                f"**{without_paginated.index(song) + 1}** -> ***{song.title}*** 🎶\n"
+                                f"**{without_paginated.index(song) + 1}.** "
+                                f"*[{song.title}]({song.info.get('uri', '')})* 🎶\n"
                                 f"```Duration : {show_track_duration(song.length)}```"
                                 for song in all_songs[playlist_page]
                             ]
                         ),
                         inline=False)
         embed.set_footer(
-            text=f"Page : {playlist_page+1} of {len(all_songs)}",
+            text=f"Page : {playlist_page + 1} of {len(all_songs)}",
             icon_url=kwargs['requester_icon']
         )
         embed.add_field(
             name="Currently playing ",
-            value=f"🔊 {currently_playing}\n",
+            value=f"🔊 [{currently_playing.title}]({currently_playing.info.get('uri', '')})\n",
             inline=False
         )
         if upcoming_songs:
             embed.add_field(
                 name="Coming Up Next! ",
-                value="\n\n".join(f"📍    {_t.title}" for _t in upcoming_songs[:showlimit]),
+                value="\n\n".join(f"📍 [{_t.title}]({_t.info.get('uri', '')})"
+                                  for _t in upcoming_songs[:configs.UPCOMING_TRACKS_LIMIT]),
                 inline=False
             )
 
@@ -126,9 +137,9 @@ class MusicEmbeds:
     @staticmethod
     def now_playing(track, display_name, icon, info, clr=discord.Color.blurple(), thumb=None, **kwargs):
         embed = discord.Embed(
-            title="Now Playing 🎵 . . .",
+            title=f"{configs.R_BEATS} Now Playing . . .",
             description=f"🔊 [{track}]({info.get('uri', '')})\n\n"
-                        f"```Playing {kwargs.get('current_song_index')+1} of {kwargs.get('total_length')} songs.```",
+                        f"```Playing {kwargs.get('current_song_index') + 1} of {kwargs.get('total_length')} songs.```",
             colour=clr,
             timestamp=dt.datetime.utcnow(),
         )
@@ -209,7 +220,8 @@ class SillyCommands:
             description=f'{target.mention} got slapped by {attacker.mention}',
             color=color
         )
-        embed.set_image(url=r'https://firebasestorage.googleapis.com/v0/b/myportfolio-366ad.appspot.com/o/discord-dependencies%2Foneslap-man.gif?alt=media&token=08be9a03-fb61-47bb-b5aa-f782b3269158')
+        embed.set_image(
+            url=r'https://firebasestorage.googleapis.com/v0/b/myportfolio-366ad.appspot.com/o/discord-dependencies%2Foneslap-man.gif?alt=media&token=08be9a03-fb61-47bb-b5aa-f782b3269158')
         return embed
 
     def pet_member(self, attacker, target, color):
@@ -489,4 +501,3 @@ def custom_help_cmd(user_type='admin', client=None):
         gb_hlp.add_field(name='Commands    : ', value=v)
 
         return gb_hlp
-

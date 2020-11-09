@@ -13,12 +13,14 @@ import asyncio
 from discord.ext import commands
 from AGNESS_BOT import (
     configs,
+    paginate,
     logger,
     MusicEmbeds,
     scale_to_10,
     Player,
     RepeatMode,
-    check_valid_channel
+    check_valid_channel,
+    show_track_duration
 )
 
 # Custom exceptions
@@ -29,8 +31,7 @@ from AGNESS_BOT import (
     PlayerIsAlreadyPaused,
     NoMoreTracks,
     NoPreviousTracks,
-    InvalidRepeatMode,
-    paginate
+    InvalidRepeatMode
 )
 
 cooldown_warn = 0
@@ -51,13 +52,7 @@ PAGINATION_LIMIT = configs.PAGINATION_LIMIT
 
 MUSIC_SEARCH_ENGINE = MUSIC_SEARCH_ENGINE.lower()
 
-OPTIONS = {
-    "1️⃣": 0,
-    "2⃣": 1,
-    "3⃣": 2,
-    "4⃣": 3,
-    "5⃣": 4,
-}
+
 
 debug_index = 1
 
@@ -67,7 +62,7 @@ URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^
             r"(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 
 JUMP_REGEX = r"^([1-9][0-9]{0,2}|1000)$"
-SEEK_REGEX = r'^([-|+])|([1-9]|[1-5][0-9]|60)$'
+SEEK_REGEX = r'^[+|-]([1-9]|[1-5][0-9]|60)$'
 
 
 class Music(commands.Cog, wavelink.WavelinkMixin):
@@ -311,12 +306,27 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             else:
                 putlog.debug('Query was not a song jump. now checking if query is a link')
                 query = query.strip("<>")  # search by link
-                if not re.match(URL_REGEX, query):
-                    putlog.debug('Query is song name. NOT A LINK')
-                    query = self.set_search_engine(query)  # search by song name
 
-                songs_found = await self.wavelink.get_tracks(query)
-                await player.add_tracks(ctx, songs_found)
+                await self.search_engine_manager(ctx, query, player)
+                # if not re.match(URL_REGEX, query):
+                #     putlog.debug('Query is song name. NOT A LINK')
+                #     query = self.set_search_engine(query)  # search by song name
+                #
+                # songs_found = await self.wavelink.get_tracks(query)
+                # await player.add_tracks(ctx, songs_found)
+
+    async def search_engine_manager(self, ctx, query, player):
+        if not re.match(URL_REGEX, query):
+            putlog.debug('Query is song name. NOT A LINK')
+            songs = await self.wavelink.get_tracks(f"ytsearch:{query}")
+            if songs:
+                await player.add_tracks(ctx, songs, search_engine=configs.YT)
+            else:
+                temp = await self.wavelink.get_tracks(f"scsearch:{query}")
+                await player.add_tracks(ctx, temp, search_engine=configs.SC)
+            return
+
+        await player.add_tracks(ctx, await self.wavelink.get_tracks(query))
 
         # ----------------------------------------------------------------------
 
@@ -426,7 +436,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await player.seek(seek_length)
             await ctx.send(
                 f"Song is seeked by {seek_length // 1000} seconds, Current position is : "
-                f"{str(seek_length // 60000).zfill(2)}:{str(seek_length % 60).zfill(2)}")
+                f"{show_track_duration(seek_length)}")
         else:
             await ctx.send('stride is wrong')
 
@@ -514,12 +524,17 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if page_stride > len(all_songs):
             await ctx.send('That Page is not available...')
             return
-        currently_playing = player.queue.current_track.title
+        currently_playing = player.queue.current_track
         upcoming_song = player.queue.upcoming
         total_duration = player.queue.total_duration
 
+        def _check(r, u):
+            return (
+                r.emoji == '🗑' and u == ctx.author and r.message.id == plst.id
+            )
+
         # Show Playlist
-        await ctx.send(
+        plst = await ctx.send(
             embed=music_embeds.show_playlist(
                 all_songs,
                 currently_playing,
@@ -533,6 +548,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 playlist_length=player.queue.length
             )  # Accepts kwargs
         )
+        await plst.add_reaction('🗑')
+        reaction, _ = await self.bot.wait_for('reaction_add', check=_check)
+        if reaction:
+            await plst.delete()
 
     @commands.command(name='information', aliases=['info'])
     @check_valid_channel
@@ -561,7 +580,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player = self.get_player(ctx)
         player.queue.empty()
         self.song_index = 0
-        self.current_volume = 50
+        self.current_volume = DEFAULT_VOLUME
         await player.stop()
         await ctx.send('Player reset complete!')
 

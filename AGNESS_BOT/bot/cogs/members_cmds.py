@@ -167,7 +167,5 @@ class Members(commands.Cog):
         )
 
 
-
-
 def setup(client):
     client.add_cog(Members(client))

@@ -16,7 +16,8 @@ from AGNESS_BOT import (
     QueueIsEmpty,
     NotInQueue,
     MusicEmbeds,
-    logger
+    logger,
+    configs
 )
 
 putlog = logger.get_custom_logger(__name__)
@@ -184,7 +185,7 @@ class Player(wavelink.Player):
         except KeyError:
             pass
 
-    async def add_tracks(self, ctx, tracks) -> None:
+    async def add_tracks(self, ctx, tracks, search_engine=None) -> None:
         if not tracks:
             putlog.debug('No search results. Raising Exception.     NoTracksFound!')
             await ctx.send('Oops! . . . I didnt found any song for given query! 😕')
@@ -202,10 +203,11 @@ class Player(wavelink.Player):
             self.song_and_requester[tracks[0].title] = ctx  # ----> Set requester and song name
             await ctx.send(
                 f"Only one song found for given name but anyway, I added it in queue. Keep ROckinG the party  🎊 🥳 🎉")
-            await ctx.send(f"✅ Added {tracks[0].title} to the queue at Position : {self.queue.track_index(tracks[0])+1}")
+            await ctx.send(
+                f"✅ Added {tracks[0].title} to the queue at Position : {self.queue.track_index(tracks[0]) + 1}")
         else:
             putlog.debug('Multiple songs found. Asking user to choose which one to put in queue.')
-            track = await self.choose_track(ctx, tracks)  # Show option to choose from tracks
+            track = await self.choose_track(ctx, tracks, search_engine)  # Show option to choose from tracks
             if track is not None:
                 self.queue.add(track)
                 await ctx.send(
@@ -214,7 +216,8 @@ class Player(wavelink.Player):
                         self.queue.track_index(track) + 1,
                         ctx.author.display_name,
                         ctx.author.avatar_url,
-                        ctx.author.color
+                        ctx.author.color,
+                        search_engine=search_engine
                     )
                 )
             else:
@@ -227,11 +230,12 @@ class Player(wavelink.Player):
     async def start_playback(self, track):
         requester = self.song_and_requester.get(track.title, r'Someone ¯\_(ツ)_/¯')  # get requester from dict
         await self.show_now_playing_embed(requester, track)
+        await self.set_volume(configs.DEFAULT_VOLUME)
         await self.play(track)
         putlog.debug('Fresh Player started...')
         return
 
-    async def choose_track(self, ctx, tracks):
+    async def choose_track(self, ctx, tracks, search_engine=None):
         self.sender = ctx
 
         def _check(r, u):
@@ -240,7 +244,12 @@ class Player(wavelink.Player):
                     and u == ctx.author and r.message.id == msg.id
             )
 
-        msg = await ctx.send(embed=music_embeds.choose_track_embed(ctx, tracks, show_limit=5))
+        msg = await ctx.send(
+            embed=music_embeds.choose_track_embed(
+                ctx, tracks, search_engine,
+                show_limit=configs.SONG_RESULTS_LIMIT
+            )
+        )
 
         for emoji in list(OPTIONS.keys())[:min(len(tracks), len(OPTIONS))]:
             await msg.add_reaction(emoji)
@@ -333,6 +342,7 @@ class Player(wavelink.Player):
             current_song_index=self.queue.track_index(track)
         )
         self.nowPlaying = await ctx.send(embed=now_playing)
+        await self.nowPlaying.add_reaction('❤')
 
 
 @export

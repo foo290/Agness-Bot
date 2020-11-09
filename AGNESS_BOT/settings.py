@@ -50,8 +50,8 @@ BOT_CONFIGS = {
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS_DIR': COGS_DIR,
     'COGS': COGS,
-    'ACTIVITY_TYPE': act.watching,
-    'ACTIVITY_NAME': 'the world collapse!'
+    'ACTIVITY_TYPE': act.listening,
+    'ACTIVITY_NAME': 'my echo!'
 }
 
 CHAT_CONFIGS = {
@@ -64,7 +64,8 @@ FUNCTIONALITIES = {
     'MANAGE_NEW_JOINING': True,
     'MANAGE_MEMBER_LEFT': True,
     'MANAGE_MUSIC': True,
-    'MANAGE_MODERATION': True
+    'MANAGE_MODERATION': True,
+    'MANAGE_MESSAGES': True
 }
 
 # This is currently configured to get a dm by bot when bot is online.
@@ -93,6 +94,10 @@ MUSIC_PLAYER_CONFIGS = {
     'MAX_VOLUME': 100
 }
 
+SEARCH_ENGINE_CONFIGS = {
+    'SONG_RESULTS_LIMIT': 5
+}
+
 MUSIC_SERVER_CONFIGS = {
     'MUSIC_HOST': "lava-link-server.herokuapp.com",
     'MUSIC_PORT': 80,
@@ -111,7 +116,15 @@ MUSIC_CHANNEL_CONFIGS = {
 }
 
 PLAYER_UTILITIES_CONFIGS = {
-    'PAGINATION_LIMIT': 10,
+    'PAGINATION_LIMIT': 6,
+    'UPCOMING_TRACKS_LIMIT': 2,
+}
+
+CUSTOM_EMOJIS = {
+    'YT': '<:yt:775306162622955611> YouTube',
+    'SC': '<:sc:775309222032048178> SoundCloud',
+    'R_BEATS': '<:resonate:775316195745726504>',
+
 }
 
 LOGGING = {
@@ -125,8 +138,10 @@ configs = Config(
     CHAT_CONFIGS,
     DM_CONFIGS,
     ROLE_ALIASES,
+    SEARCH_ENGINE_CONFIGS,
     MUSIC_SERVER_CONFIGS,
     MUSIC_PLAYER_CONFIGS,
     MUSIC_CHANNEL_CONFIGS,
-    PLAYER_UTILITIES_CONFIGS
+    PLAYER_UTILITIES_CONFIGS,
+    CUSTOM_EMOJIS
 )
