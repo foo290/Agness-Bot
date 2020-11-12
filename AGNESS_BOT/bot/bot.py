@@ -4,7 +4,7 @@ NOTE : This project follows PEP 8 Styling Guide. If anything is not according to
 This module is main Bot module.
 DemonBot class in inherited from Bot class and necessary methods are overridden.
 
-configs (imported) is a dict containing every config defined in settings.py and accessible by "." (dot) operator.
+Configs (imported) is a dict containing every config defined in resonate_settings.py and accessible by "." (dot) operator.
 """
 
 from discord.ext.commands import Bot
@@ -14,7 +14,7 @@ from AGNESS_BOT import configs, logger, EventEmbeds
 
 putlog = logger.get_custom_logger(__name__)
 
-# Configurations from settings.py
+# Configurations from resonate_settings.py
 
 DEFAULT_ROLE = configs.DEFAULT_ROLE
 COMMAND_PREFIX = configs.COMMAND_PREFIX
@@ -50,11 +50,11 @@ class DemonBot(Bot):
     @staticmethod
     def log_configs() -> None:
         """
-        This function just logs the current configs bot is starting with.
+        This function just logs the current Configs bot is starting with.
         :return: None
         """
 
-        putlog.info("Bot will start with the following configs...")
+        putlog.info("Bot will start with the following Configs...")
         putlog.info(f"Default Role : {DEFAULT_ROLE}")
         putlog.info(f"Owner IDs : {OWNER_IDS}")
         putlog.info(f"Command Prefix : {COMMAND_PREFIX}")
@@ -62,7 +62,7 @@ class DemonBot(Bot):
     async def on_member_join(self, member) -> None:
         """
         Assign a role of "DEFAULT_ROLE" to every user who join the server.
-        DEFAULT_ROLE: This is defined in settings.py
+        DEFAULT_ROLE: This is defined in resonate_settings.py
         :param member: Passed by discord, the user who joined the server.
         :return: None
         """
@@ -79,7 +79,7 @@ class DemonBot(Bot):
             await channel.send(f'{member.mention} just arrived! ♥ Welcome to {member.guild.name} 😀 \n'
                                f'Lets make you familiar with rules : '
                                f'{rules_channel.mention}')
-            await channel.send(embed=EventEmbeds().member_join(member))
+            await channel.send(embed=EventEmbeds().member_join(member, rules_channel))
 
     async def on_member_remove(self, member) -> None:
         """
@@ -98,7 +98,7 @@ class DemonBot(Bot):
 
     def setup(self) -> None:
         """
-        This function loads the COGS defined in settings.py
+        This function loads the COGS defined in resonate_settings.py
         :return: None
         """
 
@@ -147,7 +147,7 @@ class DemonBot(Bot):
     async def on_ready(self) -> None:
         """
         Sets the bot's status and logs the status of bot if it is online or not.
-        Sends message to "DM_RECIPIENT" when bot is online if DM_CONFIGS are configured in settings.py.
+        Sends message to "DM_RECIPIENT" when bot is online if DM_CONFIGS are configured in resonate_settings.py.
         :return: None
         """
         await bot.change_presence(

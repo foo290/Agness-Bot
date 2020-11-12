@@ -36,6 +36,7 @@ COGS = [
     'members_cmds',
     'staff_cmds',
     'musiccog',
+    'test_cog'
 ]
 
 OWNER_IDS = {
@@ -44,21 +45,27 @@ OWNER_IDS = {
 
 #
 BOT_CONFIGS = {
-    'BOT_NAME': "Agness",
+    'BOT_NAME': "AGNESS",
     'COMMAND_PREFIX': ".",
     'BOT_TOKEN': os.environ.get('AGNESS_BOT_TOKEN'),
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS_DIR': COGS_DIR,
     'COGS': COGS,
-    'ACTIVITY_TYPE': act.listening,
-    'ACTIVITY_NAME': 'my echo!'
+    'ACTIVITY_TYPE': act.watching,
+    'ACTIVITY_NAME': 'the world collapse!'
+}
+
+GUILDS_CONFIG = {
+    'FIRST_REDIRECT_CHANNEL': 773203865151602729,  # Welcome Channel!
+    'INVITE_LINK_TTL': 86400,
+    'INVITE_LINK_MAX_USES': 50,
+
 }
 
 CHAT_CONFIGS = {
     'HOT_WORD': "hey agness"
 }
 
-#
 FUNCTIONALITIES = {
     'MANAGE_BOOT_DM': True,
     'MANAGE_NEW_JOINING': True,
@@ -71,7 +78,7 @@ FUNCTIONALITIES = {
 # This is currently configured to get a dm by bot when bot is online.
 DM_CONFIGS = {
     'DM_RECIPIENT': [OWNER_IDS['Nitin']],
-    'SEND_DM': True,
+    'SEND_DM': False,
     "ON_CONNECT": True
 }
 
@@ -89,44 +96,6 @@ COMMAND_ALIASES = {
     ],
 }
 
-MUSIC_PLAYER_CONFIGS = {
-    'DEFAULT_VOLUME': 50,
-    'MAX_VOLUME': 100
-}
-
-SEARCH_ENGINE_CONFIGS = {
-    'SONG_RESULTS_LIMIT': 5
-}
-
-MUSIC_SERVER_CONFIGS = {
-    'MUSIC_HOST': "lava-link-server.herokuapp.com",
-    'MUSIC_PORT': 80,
-    'REST_URI': "http://lava-link-server.herokuapp.com",
-    'MUSIC_SERVER_PW': "serverserveserverdata",
-    'MUSIC_SERVER_REGION': "na",
-    'MUSIC_SEARCH_ENGINE': "soundcloud",
-}
-
-MUSIC_CHANNEL_CONFIGS = {
-    'RESTRICT_CMDS_TO_MUSIC_CHANNEL': True,
-    'MUSIC_CMD_CHANNEL': 769254977863417887,
-    'BOT_LEAVE_DELAY': 10,
-    'NOW_PLAYING_GIF_URL': r"https://i.pinimg.com/originals/64/53/24/645324641a0555cc55cea87787fc0bcb.gif",
-    'INITIAL_CONNECT_GIF_URL': r"https://i.gifer.com/7d20.gif",
-}
-
-PLAYER_UTILITIES_CONFIGS = {
-    'PAGINATION_LIMIT': 6,
-    'UPCOMING_TRACKS_LIMIT': 2,
-}
-
-CUSTOM_EMOJIS = {
-    'YT': '<:yt:775306162622955611> YouTube',
-    'SC': '<:sc:775309222032048178> SoundCloud',
-    'R_BEATS': '<:resonate:775316195745726504>',
-
-}
-
 LOGGING = {
     'LOG_FILE': 'logs/agness.log',
 }
@@ -138,10 +107,5 @@ configs = Config(
     CHAT_CONFIGS,
     DM_CONFIGS,
     ROLE_ALIASES,
-    SEARCH_ENGINE_CONFIGS,
-    MUSIC_SERVER_CONFIGS,
-    MUSIC_PLAYER_CONFIGS,
-    MUSIC_CHANNEL_CONFIGS,
-    PLAYER_UTILITIES_CONFIGS,
-    CUSTOM_EMOJIS
+    GUILDS_CONFIG,
 )

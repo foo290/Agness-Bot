@@ -23,11 +23,20 @@ DEFAULT_ROLE = configs.DEFAULT_ROLE
 class Members(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.first_redirect_channel = self.client.get_channel(configs.FIRST_REDIRECT_CHANNEL)
 
     @commands.has_role(DEFAULT_ROLE)
     @commands.command()
-    async def invite(self, ctx):
-        link = await ctx.channel.create_invite(max_age=0)
+    async def invite(self, ctx, temp=False, reason='Random Invite!'):
+        if temp == 'temp':
+            temp = True
+
+        link = await self.first_redirect_channel.create_invite(
+            max_age=configs.INVITE_LINK_TTL,
+            max_uses=configs.INVITE_LINK_MAX_USES,
+            temporary=temp,
+            reason=reason
+        )
         await ctx.send(link)
 
     @commands.command(aliases=['remind', 'set_reminder'])
@@ -165,6 +174,11 @@ class Members(commands.Cog):
                 member, ctx.author.color
             )
         )
+
+    @commands.command(name='test')
+    async def testCommand(self,ctx):
+        channel = self.client.get_channel(773203865151602729)
+        await ctx.send(embed=discord.Embed(title=channel.mention, description=channel.mention))
 
 
 def setup(client):
