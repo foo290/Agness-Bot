@@ -78,7 +78,7 @@ FUNCTIONALITIES = {
 # This is currently configured to get a dm by bot when bot is online.
 DM_CONFIGS = {
     'DM_RECIPIENT': [OWNER_IDS['Nitin']],
-    'SEND_DM': False,
+    'SEND_DM': True,
     "ON_CONNECT": True
 }
 
