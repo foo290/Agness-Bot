@@ -1,0 +1,120 @@
+[0;32m[INFO] - |2020-11-19 18:36:01| - [AGNESS_BOT.bot.bot : LN : 57] - Bot will start with the following Configs...[0m
+[0;32m[INFO] - |2020-11-19 18:36:01| - [AGNESS_BOT.bot.bot : LN : 58] - Default Role : Member[0m
+[0;32m[INFO] - |2020-11-19 18:36:01| - [AGNESS_BOT.bot.bot : LN : 59] - Owner IDs : [734861106698387548][0m
+[0;32m[INFO] - |2020-11-19 18:36:01| - [AGNESS_BOT.bot.bot : LN : 60] - Command Prefix : ![0m
+[0;32m[INFO] - |2020-11-19 18:36:01| - [__main__ : LN : 16] - +-------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:36:01| - [__main__ : LN : 17] - | Spinning Up...  STATUS : OK!  |[0m
+[0;32m[INFO] - |2020-11-19 18:36:01| - [__main__ : LN : 18] - +-------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:36:03| - [AGNESS_BOT.bot.bot : LN : 119] - DemonBot is connected.      OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 105] - loading COGs -------------------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.admin_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.dm_cmds              Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.members_cmds         Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.moderation_cmds      Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.musiccog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.owner_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.test_cog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 112] - COGs Loaded---------------------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:36:05| - [AGNESS_BOT.bot.bot : LN : 164] - DemonBot is online...       OK![0m
+[0;32m[INFO] - |2020-11-19 18:42:56| - [AGNESS_BOT.bot.bot : LN : 57] - Bot will start with the following Configs...[0m
+[0;32m[INFO] - |2020-11-19 18:42:56| - [AGNESS_BOT.bot.bot : LN : 58] - Default Role : Member[0m
+[0;32m[INFO] - |2020-11-19 18:42:56| - [AGNESS_BOT.bot.bot : LN : 59] - Owner IDs : [734861106698387548][0m
+[0;32m[INFO] - |2020-11-19 18:42:56| - [AGNESS_BOT.bot.bot : LN : 60] - Command Prefix : ![0m
+[0;32m[INFO] - |2020-11-19 18:42:56| - [__main__ : LN : 16] - +-------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:42:56| - [__main__ : LN : 17] - | Spinning Up...  STATUS : OK!  |[0m
+[0;32m[INFO] - |2020-11-19 18:42:56| - [__main__ : LN : 18] - +-------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:42:58| - [AGNESS_BOT.bot.bot : LN : 119] - DemonBot is connected.      OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 105] - loading COGs -------------------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.admin_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.dm_cmds              Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.members_cmds         Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.moderation_cmds      Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.musiccog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.owner_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.test_cog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 112] - COGs Loaded---------------------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:43:00| - [AGNESS_BOT.bot.bot : LN : 164] - DemonBot is online...       OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:39| - [AGNESS_BOT.bot.bot : LN : 57] - Bot will start with the following Configs...[0m
+[0;32m[INFO] - |2020-11-19 18:51:39| - [AGNESS_BOT.bot.bot : LN : 58] - Default Role : Member[0m
+[0;32m[INFO] - |2020-11-19 18:51:39| - [AGNESS_BOT.bot.bot : LN : 59] - Owner IDs : [734861106698387548][0m
+[0;32m[INFO] - |2020-11-19 18:51:39| - [AGNESS_BOT.bot.bot : LN : 60] - Command Prefix : ![0m
+[0;32m[INFO] - |2020-11-19 18:51:39| - [__main__ : LN : 16] - +-------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:51:39| - [__main__ : LN : 17] - | Spinning Up...  STATUS : OK!  |[0m
+[0;32m[INFO] - |2020-11-19 18:51:39| - [__main__ : LN : 18] - +-------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:51:41| - [AGNESS_BOT.bot.bot : LN : 119] - DemonBot is connected.      OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 105] - loading COGs -------------------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.admin_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.dm_cmds              Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.members_cmds         Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.moderation_cmds      Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.musiccog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.owner_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.test_cog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 112] - COGs Loaded---------------------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:51:43| - [AGNESS_BOT.bot.bot : LN : 164] - DemonBot is online...       OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:07| - [AGNESS_BOT.bot.bot : LN : 57] - Bot will start with the following Configs...[0m
+[0;32m[INFO] - |2020-11-19 18:56:07| - [AGNESS_BOT.bot.bot : LN : 58] - Default Role : Member[0m
+[0;32m[INFO] - |2020-11-19 18:56:07| - [AGNESS_BOT.bot.bot : LN : 59] - Owner IDs : [734861106698387548][0m
+[0;32m[INFO] - |2020-11-19 18:56:07| - [AGNESS_BOT.bot.bot : LN : 60] - Command Prefix : ![0m
+[0;32m[INFO] - |2020-11-19 18:56:07| - [__main__ : LN : 16] - +-------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:56:07| - [__main__ : LN : 17] - | Spinning Up...  STATUS : OK!  |[0m
+[0;32m[INFO] - |2020-11-19 18:56:07| - [__main__ : LN : 18] - +-------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:56:09| - [AGNESS_BOT.bot.bot : LN : 119] - DemonBot is connected.      OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 105] - loading COGs -------------------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.admin_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.dm_cmds              Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.members_cmds         Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.moderation_cmds      Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.musiccog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.owner_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.test_cog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 112] - COGs Loaded---------------------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 18:56:11| - [AGNESS_BOT.bot.bot : LN : 164] - DemonBot is online...       OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:12| - [AGNESS_BOT.bot.bot : LN : 57] - Bot will start with the following Configs...[0m
+[0;32m[INFO] - |2020-11-19 19:03:12| - [AGNESS_BOT.bot.bot : LN : 58] - Default Role : Member[0m
+[0;32m[INFO] - |2020-11-19 19:03:12| - [AGNESS_BOT.bot.bot : LN : 59] - Owner IDs : [734861106698387548][0m
+[0;32m[INFO] - |2020-11-19 19:03:12| - [AGNESS_BOT.bot.bot : LN : 60] - Command Prefix : ![0m
+[0;32m[INFO] - |2020-11-19 19:03:12| - [__main__ : LN : 16] - +-------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 19:03:12| - [__main__ : LN : 17] - | Spinning Up...  STATUS : OK!  |[0m
+[0;32m[INFO] - |2020-11-19 19:03:12| - [__main__ : LN : 18] - +-------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 19:03:14| - [AGNESS_BOT.bot.bot : LN : 119] - DemonBot is connected.      OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 105] - loading COGs -------------------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.admin_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.dm_cmds              Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.members_cmds         Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.moderation_cmds      Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.musiccog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.owner_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.test_cog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 112] - COGs Loaded---------------------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 19:03:16| - [AGNESS_BOT.bot.bot : LN : 164] - DemonBot is online...       OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:22| - [AGNESS_BOT.bot.bot : LN : 57] - Bot will start with the following Configs...[0m
+[0;32m[INFO] - |2020-11-19 19:03:22| - [AGNESS_BOT.bot.bot : LN : 58] - Default Role : Member[0m
+[0;32m[INFO] - |2020-11-19 19:03:22| - [AGNESS_BOT.bot.bot : LN : 59] - Owner IDs : [734861106698387548][0m
+[0;32m[INFO] - |2020-11-19 19:03:22| - [AGNESS_BOT.bot.bot : LN : 60] - Command Prefix : ![0m
+[0;32m[INFO] - |2020-11-19 19:03:22| - [__main__ : LN : 16] - +-------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 19:03:22| - [__main__ : LN : 17] - | Spinning Up...  STATUS : OK!  |[0m
+[0;32m[INFO] - |2020-11-19 19:03:22| - [__main__ : LN : 18] - +-------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 19:03:24| - [AGNESS_BOT.bot.bot : LN : 119] - DemonBot is connected.      OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 105] - loading COGs -------------------------------------------+[0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.admin_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.dm_cmds              Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.members_cmds         Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.moderation_cmds      Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.musiccog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.owner_cmds           Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 109] - AGNESS_BOT.bot.cogs.test_cog             Loaded.     OK![0m
+[0;32m[INFO] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 112] - COGs Loaded---------------------------------------------+
+[0m
+[0;35m[DEBUG] - |2020-11-19 19:03:26| - [AGNESS_BOT.bot.bot : LN : 164] - DemonBot is online...       OK![0m
