@@ -34,8 +34,9 @@ COGS = [
     'admin_cmds',
     'dm_cmds',
     'members_cmds',
-    'staff_cmds',
+    'moderation_cmds',
     'musiccog',
+    'owner_cmds',
     'test_cog'
 ]
 
@@ -45,14 +46,16 @@ OWNER_IDS = {
 
 #
 BOT_CONFIGS = {
-    'BOT_NAME': "AGNESS",
+    'BOT_NAME': "Agness",
     'COMMAND_PREFIX': ".",
     'BOT_TOKEN': os.environ.get('AGNESS_BOT_TOKEN'),
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS_DIR': COGS_DIR,
     'COGS': COGS,
     'ACTIVITY_TYPE': act.watching,
-    'ACTIVITY_NAME': 'the world collapse!'
+    'ACTIVITY_NAME': 'the world collapse!',
+    'SHOW_TYPING': False,
+    'TYPING_INTERVAL': 0.5
 }
 
 GUILDS_CONFIG = {
@@ -63,9 +66,10 @@ GUILDS_CONFIG = {
 }
 
 CHAT_CONFIGS = {
-    'HOT_WORD': "hey agness"
+    'HOT_WORD': "hey amadeus"
 }
 
+#
 FUNCTIONALITIES = {
     'MANAGE_BOOT_DM': True,
     'MANAGE_NEW_JOINING': True,
@@ -87,6 +91,7 @@ ROLE_ALIASES = {
     'ADMIN_ROLE': 'Admin',
     'STAFF_ROLE': 'Staff',
     'DEFAULT_ROLE': 'Member'
+
 }
 
 # Currently not in use X_X

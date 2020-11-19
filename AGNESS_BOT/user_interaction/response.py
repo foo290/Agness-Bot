@@ -1,6 +1,5 @@
 import random
 
-
 class Respond:
     def __init__(self):
         self.fixed_replies = {
@@ -69,7 +68,7 @@ class Respond:
             ],
             '_songs': [
                 'can u sing', 'can u sing a song', 'sing a song','sing me a song'
-            ]
+            ],
 
         }
 
@@ -165,7 +164,7 @@ class Respond:
             ],
             '_fight': [
                 'Fighting commands are not ready yet...'
-            ]
+            ],
         }
 
     def get_replies(self, msg):

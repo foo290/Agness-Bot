@@ -1,3 +1,6 @@
+import sys, os
+sys.path.append(os.path.expanduser('~/bot_project/'))
+
 from AGNESS_BOT.bot import bot
 from AGNESS_BOT.user_interaction.response import Respond
 from discord.ext import commands
@@ -6,7 +9,6 @@ from AGNESS_BOT import (
     configs,
     custom_help_cmd,
 )
-
 
 channel_id = configs.MUSIC_CMD_CHANNEL
 putlog = logger.get_custom_logger(__name__)
@@ -168,7 +170,21 @@ async def load_all_ext(ctx):
 
 @commands.has_role(ADMIN_ROLE)
 @bot.command(aliases=['rlcog'])
-async def reload_exts(ctx):
+async def reload_ext(ctx, *, ext):
+    putlog.warning(f'Reloading command for {ext} received.')
+    try:
+        putlog.info(f'Reloading {ext}...')
+        bot.reload_extension(f'{COGS_DIR + ext}')
+        putlog.info(f'{ext} Loaded!')
+        await ctx.send(f'{ext} ReLoaded! ✅')
+    except Exception as e:
+        putlog.exception(e)
+        await ctx.send(f'Reloading of {ext} Failed! ❌')
+
+
+@commands.has_role(ADMIN_ROLE)
+@bot.command(aliases=['rlallcog'])
+async def reload_all_exts(ctx):
     putlog.info('Reloading cogs...')
     await ctx.send('Reloading cogs...')
     putlog.warning('Unloading COGS...')

@@ -1,6 +1,7 @@
 import discord
 from AGNESS_BOT import configs
 from .decorators import export
+from .urls import GetUrl
 import datetime as dt
 
 COMMAND_PREFIX = configs.COMMAND_PREFIX
@@ -53,23 +54,23 @@ class SillyCommands:
     def __init__(self):
         pass
 
-    def slap_member(self, attacker, target, color):
+    @staticmethod
+    def slap_member(attacker, target, color):
         embed = discord.Embed(
-            title="Slaaapppp!...",
+            title="Slaaapppp!... 💥",
             description=f'{target.mention} got slapped by {attacker.mention}',
             color=color
         )
-        embed.set_image(
-            url=r'https://firebasestorage.googleapis.com/v0/b/myportfolio-366ad.appspot.com/o/discord-dependencies%2Foneslap-man.gif?alt=media&token=08be9a03-fb61-47bb-b5aa-f782b3269158')
+        embed.set_image(url=GetUrl.get('slap', dynamic=True))
         return embed
 
-    def pet_member(self, attacker, target, color):
+    @staticmethod
+    def pet_member(attacker, target, color):
         embed = discord.Embed(
             description=f'{attacker.mention} pets {target.mention}',
             color=color
         )
-        embed.set_image(
-            url=r'https://firebasestorage.googleapis.com/v0/b/myportfolio-366ad.appspot.com/o/discord-dependencies%2Fpat_008.gif?alt=media&token=04783e71-75af-4a52-8009-2b26c9c5ab8c')
+        embed.set_image(url=GetUrl.get('pet', dynamic=True))
         return embed
 
 
@@ -86,7 +87,8 @@ class EventEmbeds:
             color=member.color,
             timestamp=dt.datetime.utcnow()
         )
-        embed.set_image(url=r'https://firebasestorage.googleapis.com/v0/b/discord-bot-294607.appspot.com/o/bot%2Fgifs%2Fother_gifs%2FAS_divider.gif?alt=media&token=9d5aa995-7a36-4cc5-b92e-a19bd5c03143')
+        embed.set_thumbnail(url=GetUrl.get('wc_gif'))
+        embed.set_image(url=GetUrl.get('rainbow_divider'))
 
         embed.set_footer(text=f'Powered by : {BOT_NAME}')
         return embed
@@ -101,6 +103,9 @@ class EventEmbeds:
         )
         embed.set_footer(text=f'Powered by : {BOT_NAME}')
         return embed
+
+    def diwali(self):
+        return "https://firebasestorage.googleapis.com/v0/b/discord-bot-294607.appspot.com/o/bot%2Fgifs%2Fother_gifs%2Fdiwali_fireworks.gif?alt=media&token=0d245a52-02ee-4c43-92e7-df59823d4795"
 
 
 @export
@@ -151,7 +156,8 @@ def custom_help_cmd(user_type='admin', client=None):
     if user_type == 'admin':
         admin_help = discord.Embed(
             title='Admin Help Commands!',
-            description='These commands are only available to admins. \n(Commands available to lower roles are also available to admins.)',
+            description='These commands are only available to admins. \n'
+                        '(Commands available to lower roles are also available to admins.)',
             color=discord.Color.dark_magenta()
         )
         admin_help.add_field(

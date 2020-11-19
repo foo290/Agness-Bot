@@ -1,6 +1,9 @@
 import sys
 from discord.ext import commands
 from AGNESS_BOT.settings import configs
+from discord.ext.commands import context
+import asyncio
+import functools
 
 
 def export(fn):
@@ -24,7 +27,26 @@ async def predicate(ctx):
 # A decorator to check Music commands are being called in music channel only.
 check_valid_channel = commands.check(predicate)
 
+
+def show_typing(interval=configs.TYPING_INTERVAL):
+    assert any([isinstance(interval, int), isinstance(interval, float)])
+
+    def top_wrapper(fun):
+        @functools.wraps(fun)
+        async def wrapper(*args, **kwargs):
+            if configs.SHOW_TYPING:
+                for ctx in args:
+                    if isinstance(ctx, context.Context):
+                        async with ctx.typing():
+                            await asyncio.sleep(interval)
+            return await fun(*args, **kwargs)
+
+        return wrapper
+
+    return top_wrapper
+
+
 __all__ = [
     "check_valid_channel",
-    "export"
+    "export", "show_typing"
 ]
