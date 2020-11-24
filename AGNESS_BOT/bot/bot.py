@@ -66,14 +66,21 @@ class DemonBot(Bot):
         :param member: Passed by discord, the user who joined the server.
         :return: None
         """
+        channel = self.get_channel(configs.WELCOME_CHANNEL)
+        rules_channel = self.get_channel(configs.RULES_CHANNEL)
 
         putlog.info(f'{member} has joined!')
-        role = discord.utils.get(member.guild.roles, name=DEFAULT_ROLE)
+        role = discord.utils.get(member.guild.roles, name=configs.NEW_ROLE)
         await member.add_roles(role)
         putlog.info(f"{member} has assigned with {role} role.")
 
-        channel = self.get_channel(773203865151602729)
-        rules_channel = self.get_channel(773219713026621490)
+        await member.send(f'**Welcome to {member.guild.name}! 😃**\n'
+                          f'Hello {member.display_name}, I am {bot.user.display_name}!\n'
+                          f'You have to write **i agree ####** in {channel.mention} where **####** '
+                          f'is the four digits after your username in  discord. \n\n'
+                          f'for example if i have username **example#1234**, then I would type i agree 1234".\n\n'
+                          f'**But first, read the {rules_channel.mention}**\n\n'
+                          f'Welcome again and have fun 🎉 🥳')
 
         if not member.bot:
             await channel.send(f'{member.mention} just arrived! ♥ Welcome to {member.guild.name} 😀 \n'

@@ -146,7 +146,7 @@ class Staff(commands.Cog):
         await ctx.send(embed=warning_embed)
 
     @commands.has_role(STAFF_ROLE)
-    @commands.command(aliases=['kik'])
+    @commands.command(aliases=['kik', 'kick'])
     async def _kick(self, ctx, member: Union[discord.Member, str], *, reason=None):
         """
         No docs needed!

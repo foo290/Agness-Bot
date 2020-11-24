@@ -66,6 +66,11 @@ class Test(commands.Cog):
         await ctx.send(embed=discord.Embed().set_image(
             url='https://media.tenor.com/images/4f404ce06825f7d2b6ab44a3ac2acd41/tenor.gif'))
 
+    @commands.command()
+    async def sendm(self, ctx, user: discord.Member, msg):
+        await user.send(msg)
+        await ctx.send('sent!')
+
 
 def setup(client):
     client.add_cog(Test(client))

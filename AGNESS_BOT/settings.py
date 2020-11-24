@@ -63,6 +63,10 @@ GUILDS_CONFIG = {
     'INVITE_LINK_TTL': 86400,
     'INVITE_LINK_MAX_USES': 50,
 
+    'WELCOME_CHANNEL': 773203865151602729,
+    'RULES_CHANNEL': 773219713026621490,
+
+
 }
 
 CHAT_CONFIGS = {
@@ -90,7 +94,8 @@ ROLE_ALIASES = {
     'OWNER_ROLE': 'Owner',
     'ADMIN_ROLE': 'Admin',
     'STAFF_ROLE': 'Staff',
-    'DEFAULT_ROLE': 'Member'
+    'DEFAULT_ROLE': 'Member',
+    'NEW_ROLE': 'new'
 
 }
 
@@ -114,3 +119,9 @@ configs = Config(
     ROLE_ALIASES,
     GUILDS_CONFIG,
 )
+
+# CLOUD CONFIGS:
+#   BOT NAME
+#   BOT TOKEN
+#   CMD PREFIX
+

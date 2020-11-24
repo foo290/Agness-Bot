@@ -24,9 +24,9 @@ class Configs(object):
     SONG_RESULTS_LIMIT: int = 5
 
     # MUSIC_SERVER_CONFIGS (uncomment below for cloud vps)
-    MUSIC_HOST: str = "13.68.240.20"
+    MUSIC_HOST: str = "10.0.0.1"
     MUSIC_PORT: int = 2333
-    REST_URI: str = "http://13.68.240.20:2333"
+    REST_URI: str = "http://10.0.0.1:2333"
     MUSIC_SERVER_PW: str = os.environ.get('MUSIC_SERVER_PW')
     MUSIC_SERVER_REGION: str = "na"
 

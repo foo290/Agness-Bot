@@ -83,7 +83,7 @@ class EventEmbeds:
     def member_join(member, redirect_channel):
         embed = discord.Embed(
             title=f'🎉 🥳 Welcome {member.display_name}! 😃',
-            description=f'Dont forget to read the {redirect_channel.mention}. Have fun ✌',
+            description=f'Wait wait... You have to find your way in  {redirect_channel.mention} 😁 😁. Have fun ✌',
             color=member.color,
             timestamp=dt.datetime.utcnow()
         )
