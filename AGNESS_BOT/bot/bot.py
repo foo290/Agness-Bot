@@ -66,7 +66,7 @@ class DemonBot(Bot):
         :param member: Passed by discord, the user who joined the server.
         :return: None
         """
-        channel = self.get_channel(configs.WELCOME_CHANNEL)
+        channel = self.get_channel(configs.FIRST_REDIRECT_CHANNEL)
         rules_channel = self.get_channel(configs.RULES_CHANNEL)
 
         putlog.info(f'{member} has joined!')

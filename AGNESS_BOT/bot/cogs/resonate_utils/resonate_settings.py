@@ -24,11 +24,12 @@ class Configs(object):
     SONG_RESULTS_LIMIT: int = 5
 
     # MUSIC_SERVER_CONFIGS (uncomment below for cloud vps)
-    MUSIC_HOST: str = "10.0.0.1"
+    MUSIC_HOST: str = "10.0.0.4"
     MUSIC_PORT: int = 2333
-    REST_URI: str = "http://10.0.0.1:2333"
-    MUSIC_SERVER_PW: str = os.environ.get('MUSIC_SERVER_PW')
+    REST_URI: str = "http://10.0.0.4:2333"
+    MUSIC_SERVER_PW: str = 'youshallnotpass'
     MUSIC_SERVER_REGION: str = "na"
+    MUSIC_SEARCH_ENGINE: str = "youtube"
 
     # MUSIC_SERVER_CONFIGS (uncomment below for local machine)
     # MUSIC_HOST: str = "127.0.0.1"

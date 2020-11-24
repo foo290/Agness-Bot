@@ -94,6 +94,19 @@ class EventEmbeds:
         return embed
 
     @staticmethod
+    def member_verification_complete():
+        embed = discord.Embed(
+            title='✅ Verification Successful !',
+            description='**KUDOS 🎉 🥳**\n'
+                        'Your verification is complete.\n\n'
+                        '**You now have access to server. Have fun ✌ 🥳**',
+            timestamp=dt.datetime.utcnow(),
+            colour=discord.Color.green()
+        )
+
+        return embed
+
+    @staticmethod
     def member_left(member):
         embed = discord.Embed(
             title=f'Goodbye {member.display_name}... 👋',

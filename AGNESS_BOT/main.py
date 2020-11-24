@@ -9,7 +9,10 @@ from AGNESS_BOT import (
     logger,
     configs,
     custom_help_cmd,
+    EventEmbeds,
 )
+
+embed_msgs = EventEmbeds()
 
 channel_id = configs.MUSIC_CMD_CHANNEL
 putlog = logger.get_custom_logger(__name__)
@@ -73,8 +76,7 @@ async def on_message(message):
             await message.author.add_roles(role_to_assign)
             putlog.info(f"{message.author} has assigned with {role_to_assign} role.")
 
-            await message.author.send('**KUDOS 🎉 🥳**\nYour verification is complete.'
-                                      '\n\n**You now have access to server. Have fun ✌ 🥳**')
+            await message.author.send(embed=embed_msgs.member_verification_complete())
             return
         else:
             await message.channel.send(f'Ohow... Your 4-digit no. does not match your user discriminator.\n'

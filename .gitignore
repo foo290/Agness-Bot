@@ -9,6 +9,8 @@ __pycache__/
 #IDE folders
 .idea/
 
+AGNESS_BOT/logs/ *.log
+
 
 # Distribution / packaging
 .Python
