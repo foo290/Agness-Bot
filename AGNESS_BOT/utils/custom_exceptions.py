@@ -1,0 +1,3 @@
+class ConfigSettingNotFound(Exception):
+    pass
+

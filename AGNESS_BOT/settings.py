@@ -45,9 +45,9 @@ OWNER_IDS = {
 }
 
 BOT_CONFIGS = {
-    'BOT_NAME': "Amadeus",
-    'COMMAND_PREFIX': "!",
-    'BOT_TOKEN': os.environ.get('AMADEUS_BOT_TOKEN'),
+    'BOT_NAME': "Agness",
+    'COMMAND_PREFIX': ".",
+    'BOT_TOKEN': os.environ.get('AGNESS_BOT_TOKEN'),
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS_DIR': COGS_DIR,
     'COGS': COGS,
@@ -65,10 +65,6 @@ GUILDS_CONFIG = {
 
     'INVITE_LINK_TTL': 86400,
     'INVITE_LINK_MAX_USES': 50,
-}
-
-CHAT_CONFIGS = {
-    'HOT_WORD': "hey amadeus"
 }
 
 #
@@ -111,7 +107,6 @@ LOGGING = {
 configs = Config(
     LOGGING,
     BOT_CONFIGS,
-    CHAT_CONFIGS,
     DM_CONFIGS,
     ROLE_ALIASES,
     GUILDS_CONFIG,

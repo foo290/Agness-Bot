@@ -1,4 +1,4 @@
-from .exceptions import ConfigSettingNotFound
+from .custom_exceptions import ConfigSettingNotFound
 
 
 class Config(dict):

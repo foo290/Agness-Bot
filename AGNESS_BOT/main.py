@@ -1,9 +1,8 @@
 import sys, os
 
-sys.path.append(os.path.expanduser('~/bot_project/'))
+sys.path.append(os.path.expanduser('~/bot_project/'))  # This is for my linux server O_o
 
 from AGNESS_BOT.bot import bot
-from AGNESS_BOT.user_interaction.response import Respond
 from discord.ext import commands
 from AGNESS_BOT import (
     logger,
@@ -21,34 +20,13 @@ putlog.info("+-------------------------------+")
 putlog.info("| Spinning Up...  STATUS : OK!  |")
 putlog.info("+-------------------------------+\n")
 
-respond_to_user = Respond()
-
 TALK_AGNESS = False
 active_chat = list()
 
-HOT_WORD = configs.HOT_WORD
 DEFAULT_ROLE = configs.DEFAULT_ROLE
 ADMIN_ROLE = configs.ADMIN_ROLE
 COGS = configs.COGS
 COGS_DIR = configs.COGS_DIR
-
-
-def check_hotword(msg, author, message):
-    global TALK_AGNESS
-
-    if msg == HOT_WORD:
-        if message.author.discriminator not in active_chat:
-            active_chat.append(author)
-        TALK_AGNESS = True
-        return True
-
-
-def check_active_users(l):
-    try:
-        i = l[0]
-        return True
-    except IndexError:
-        return False
 
 
 @bot.listen('on_message')
