@@ -14,6 +14,8 @@ class GetUrl:
             # Events gifs
             'wc_gif': "https://firebasestorage.googleapis.com/v0/b/discord-bot-294607.appspot.com/o/bot%2Fgifs%2Fother_gifs%2Fwelcome%20gifs%2Fanime_cheer.gif?alt=media&token=f5618220-d975-4a3e-9f3e-6df4134986b3",
             'bye_gif': '',
+            'wc02_gif': 'https://firebasestorage.googleapis.com/v0/b/discord-bot-294607.appspot.com/o/bot%2Fgifs%2Fother_gifs%2Fwelcome%20gifs%2Fwelcome.gif?alt=media&token=2f02e96f-1d8b-4dbf-8773-fd79cd23606c',
+
 
             # Embed gifs
             'rainbow_divider': 'https://firebasestorage.googleapis.com/v0/b/discord-bot-294607.appspot.com/o/bot%2Fgifs%2Fother_gifs%2FAS_divider.gif?alt=media&token=9d5aa995-7a36-4cc5-b92e-a19bd5c03143',

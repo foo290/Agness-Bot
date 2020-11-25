@@ -67,9 +67,17 @@ class Test(commands.Cog):
             url='https://media.tenor.com/images/4f404ce06825f7d2b6ab44a3ac2acd41/tenor.gif'))
 
     @commands.command()
-    async def sendm(self, ctx, user: discord.Member, msg):
-        await user.send(msg)
-        await ctx.send('sent!')
+    async def sendm(self, ctx):
+        await ctx.send(embed=EventEmbeds().member_verification_complete())
+
+    @commands.command(aliases=['cr'])
+    async def create(self, ctx):
+        guild = ctx.guild
+
+        await guild.create_role(name='test role')
+        print(discord.Permissions())
+
+
 
 
 def setup(client):

@@ -103,6 +103,8 @@ class EventEmbeds:
             timestamp=dt.datetime.utcnow(),
             colour=discord.Color.green()
         )
+        print(GetUrl.get('wc02_gif'))
+        embed.set_image(url=GetUrl.get('wc02_gif'))
 
         return embed
 

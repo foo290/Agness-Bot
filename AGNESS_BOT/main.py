@@ -61,7 +61,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if channel == configs.WELCOME_CHANNEL:
+    if channel == configs.FIRST_REDIRECT_CHANNEL:
         if author_discriminator == msg.strip().split(' ')[-1]:
             putlog.info(f'user : {message.author.display_name} verification complete. Assigning default role now...')
 
