@@ -1,5 +1,8 @@
 """
-This module does not abide charecter length rule of 79 charecter of PEP 8 because of long raw url links.
+This module only contains the links for media content from firebase. Nothing fancy...
+
+This module does not abide charecter length rule of 79 charecter of PEP 8 because of long raw url links as i dont know
+how to shrink down these big ass firebase links.
 
 """
 
@@ -40,5 +43,3 @@ class GetUrl:
         return cls().__getattr__(key, dynamic)
 
 
-if __name__ == '__main__':
-    print(GetUrl.get('slap', dynamic=True))

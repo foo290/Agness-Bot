@@ -61,6 +61,8 @@ GUILDS_CONFIG = {
     'FIRST_REDIRECT_CHANNEL': 773203865151602729,  # Welcome Channel!
     'RULES_CHANNEL': 773219713026621490,
 
+    'MEMBER_JOIN_SELF_VERIFICATION': True,
+
     'INVITE_LINK_TTL': 86400,
     'INVITE_LINK_MAX_USES': 50,
 }
@@ -71,7 +73,6 @@ CHAT_CONFIGS = {
 
 #
 FUNCTIONALITIES = {
-    'MANAGE_BOOT_DM': True,
     'MANAGE_NEW_JOINING': True,
     'MANAGE_MEMBER_LEFT': True,
     'MANAGE_MUSIC': True,
@@ -92,8 +93,7 @@ ROLE_ALIASES = {
     'ADMIN_ROLE': 'Admin',
     'STAFF_ROLE': 'Staff',
     'DEFAULT_ROLE': 'Member',
-    'NEW_ROLE': 'new'
-
+    'UNVERIFIED': 'Unverified',
 }
 
 # Currently not in use X_X
@@ -115,9 +115,11 @@ configs = Config(
     DM_CONFIGS,
     ROLE_ALIASES,
     GUILDS_CONFIG,
+    FUNCTIONALITIES
 )
 
 # CLOUD CONFIGS:
 #   BOT NAME
 #   BOT TOKEN
 #   CMD PREFIX
+#   DM

@@ -1,3 +1,6 @@
+from .exceptions import ConfigSettingNotFound
+
+
 class Config(dict):
     def __init__(self, *args, **kwargs):
         for arg in args:
@@ -9,5 +12,8 @@ class Config(dict):
                 self[k] = v
 
     def __getattr__(self, item):
-        return self.get(item)
+        found = self.get(item)
+        if found is None:
+            raise ConfigSettingNotFound
+        return found
 

@@ -4,7 +4,8 @@ NOTE : This project follows PEP 8 Styling Guide. If anything is not according to
 This module is main Bot module.
 DemonBot class in inherited from Bot class and necessary methods are overridden.
 
-Configs (imported) is a dict containing every config defined in resonate_settings.py and accessible by "." (dot) operator.
+Configs (imported) is a dict containing every config defined in resonate_settings.py and accessible by "." (dot)
+operator.
 """
 
 from discord.ext.commands import Bot
@@ -12,10 +13,10 @@ from discord.ext import commands
 import discord
 from AGNESS_BOT import configs, logger, EventEmbeds
 
+# putlog is an instance of logging.Logger class with some custom modification in formatter for colors and format.
 putlog = logger.get_custom_logger(__name__)
 
 # Configurations from resonate_settings.py
-
 DEFAULT_ROLE = configs.DEFAULT_ROLE
 COMMAND_PREFIX = configs.COMMAND_PREFIX
 BOT_TOKEN = configs.BOT_TOKEN
@@ -70,7 +71,7 @@ class DemonBot(Bot):
         rules_channel = self.get_channel(configs.RULES_CHANNEL)
 
         putlog.info(f'{member} has joined!')
-        role = discord.utils.get(member.guild.roles, name=configs.NEW_ROLE)
+        role = discord.utils.get(member.guild.roles, name=configs.UNVERIFIED)
         await member.add_roles(role)
         putlog.info(f"{member} has assigned with {role} role.")
 
@@ -174,4 +175,5 @@ class DemonBot(Bot):
             putlog.warning('DemonBot is online...       RECONNECTING!')
 
 
+# A bot instance which is imported in __init__ so it can be import directly.
 bot = DemonBot()

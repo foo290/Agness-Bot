@@ -11,7 +11,6 @@ from AGNESS_BOT import (
 )
 
 putlog = logger.get_custom_logger(__name__)
-DEFAULT_ROLE = configs.DEFAULT_ROLE
 
 
 class OwnerCmd(commands.Cog):

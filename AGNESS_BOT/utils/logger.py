@@ -7,6 +7,9 @@ LOG_FILE = configs.LOG_FILE
 
 
 class CustomFormatter(logging.Formatter):
+    """
+    A custom formatter class which set colors and format.
+    """
     Black = "\033[0;30m"
     Red = "\033[0;31m"
     Green = "\033[0;32m"
@@ -38,6 +41,13 @@ class CustomFormatter(logging.Formatter):
 
 @export
 def get_custom_logger(name, level=logging.DEBUG, console=True):
+    """
+    This function is supposed to be called whenever you want to make a logger.
+    :param name: name of the module, set it to __name__
+    :param level: level of logging. default if debug.
+    :param console: do you want op on console or not? Default is true.
+    :return: an instance of Logger class.
+    """
     formatter = CustomFormatter()
 
     _logger = logging.Logger(name)

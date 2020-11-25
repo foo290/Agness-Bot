@@ -1,20 +1,20 @@
 import sys, os
+
 sys.path.append(os.path.expanduser('~/bot_project/'))
 
 from AGNESS_BOT.bot import bot
 from AGNESS_BOT.user_interaction.response import Respond
 from discord.ext import commands
-import discord
 from AGNESS_BOT import (
     logger,
     configs,
     custom_help_cmd,
     EventEmbeds,
+    member_join_step_verification
 )
 
 embed_msgs = EventEmbeds()
 
-channel_id = configs.MUSIC_CMD_CHANNEL
 putlog = logger.get_custom_logger(__name__)
 
 putlog.info("+-------------------------------+")
@@ -51,9 +51,14 @@ def check_active_users(l):
         return False
 
 
-
 @bot.listen('on_message')
-async def on_message(message):
+@member_join_step_verification(
+    bot=bot,
+    logger=putlog,
+    self_verification=configs.MEMBER_JOIN_SELF_VERIFICATION,
+    verification_venue_channel=configs.FIRST_REDIRECT_CHANNEL
+)
+async def on_message(message, verification_complete=None):
     msg = str(message.content).lower()
     author_discriminator = message.author.discriminator
     channel = message.channel.id
@@ -61,64 +66,14 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if channel == configs.FIRST_REDIRECT_CHANNEL:
-        if author_discriminator == msg.strip().split(' ')[-1]:
-            putlog.info(f'user : {message.author.display_name} verification complete. Assigning default role now...')
-
-            role_to_remove = discord.utils.get(message.author.guild.roles, name=configs.NEW_ROLE)
-            role_to_assign = discord.utils.get(message.author.guild.roles, name=configs.DEFAULT_ROLE)
-
-            putlog.debug(f'Removing {role_to_remove} from {message.author}')
-            await message.author.remove_roles(role_to_remove)
-            putlog.debug(f'Role {role_to_remove} removed from {message.author}')
-
-            putlog.debug(f'Assigning {role_to_assign} to user {message.author}')
-            await message.author.add_roles(role_to_assign)
-            putlog.info(f"{message.author} has assigned with {role_to_assign} role.")
-
+    if verification_complete is not None:
+        if verification_complete:
             await message.author.send(embed=embed_msgs.member_verification_complete())
             return
         else:
             await message.channel.send(f'Ohow... Your 4-digit no. does not match your user discriminator.\n'
                                        f'Your discriminator is **{author_discriminator}**')
-
-
-# @bot.listen('on_message')
-# async def on_message(message):
-#     global TALK_AGNESS, active_chat
-#     msg = str(message.content).lower()
-#     author = message.author.discriminator
-#     nickname = str(message.author).split("#")[0]
-#
-#     if TALK_AGNESS:
-#         if message.author == bot.user:
-#             return
-#         if author in active_chat:  # If user has already said hot word
-#             if author == message.author.discriminator:
-#                 if msg == 'bye agness':
-#                     active_chat.remove(author)
-#                     if not check_active_users(active_chat):  # if no one is talking to agness
-#                         TALK_AGNESS = False
-#                     await message.channel.send(f"Bye {nickname}")
-#                 else:
-#                     response = respond_to_user.get_replies(msg)  # Get reply
-#                     if response:
-#                         await message.channel.send(response)
-#                     else:
-#                         pass  # Missed Talks
-#         else:
-#             if check_hotword(msg, author,
-#                              message):  # If user is not in active chat with agness but msg is hot word
-#                 await message.channel.send(f'Hellow {nickname}')
-#     else:
-#         if check_hotword(msg, author, message):
-#             await message.channel.send(f'Hellow {nickname}')
-#
-#         else:
-#             if msg in ['gm', 'good morning agness', 'good morning']:
-#                 await message.channel.send('Good Morning 🥰')
-#             elif msg in ['gn', 'good night agness', 'good night']:
-#                 await message.channel.send('Good Night 🥰')
+            return
 
 
 @commands.has_role(DEFAULT_ROLE)

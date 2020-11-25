@@ -1,5 +1,8 @@
 """
-This module contains two web crawlers: One for scraping the results kof organic search of google and second is for wikipedia.
+This module contains two web crawlers: One for scraping the results kof organic search of google and second is for
+wikipedia.
+
+This is used in search system for given query in bot.
 """
 
 from bs4 import BeautifulSoup as bs

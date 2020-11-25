@@ -11,11 +11,7 @@ from AGNESS_BOT import (
     get_reminder_embeds,
     calculate_time,
     GoogleWebCrawler,
-    InsigniaEmbeds,
-    SillyCommands
 )
-from typing import Union
-import discord
 
 DEFAULT_ROLE = configs.DEFAULT_ROLE
 
@@ -83,7 +79,6 @@ class Members(commands.Cog):
     async def say(self, ctx, word, person):
         """
         Silly command. Will be removed soon.
-
         :param ctx: X_X
         :param word: X_X
         :param person: X_X
@@ -137,48 +132,6 @@ class Members(commands.Cog):
         await ctx.send(
             f"{c}"
         )
-
-    @commands.command(name='myinsignia')
-    async def show_insignia(self, ctx):
-        """
-        This method is to show user's information thru embeds
-        :param ctx: Passed by discord.
-        :return: None.
-        """
-
-        author = ctx.author
-        author_name = author.display_name
-        author_avatar = author.avatar_url
-        author_color = author.color
-        author_level = 10
-
-        embed = InsigniaEmbeds().get_my_insignia(
-            author_name, author_avatar, author_color, author_level
-        )
-        await ctx.send(embed=embed)
-
-    @commands.command(name='slap')
-    async def slap_command(self, ctx, member: Union[discord.Member, str]):
-        await ctx.send(
-            embed=SillyCommands().slap_member(
-                ctx.author,
-                member, ctx.author.color
-            )
-        )
-
-    @commands.command(name='pet')
-    async def slap_command(self, ctx, member: Union[discord.Member, str]):
-        await ctx.send(
-            embed=SillyCommands().pet_member(
-                ctx.author,
-                member, ctx.author.color
-            )
-        )
-
-    @commands.command(name='test')
-    async def testCommand(self,ctx):
-        channel = self.client.get_channel(773203865151602729)
-        await ctx.send(embed=discord.Embed(title=channel.mention, description=channel.mention))
 
 
 def setup(client):

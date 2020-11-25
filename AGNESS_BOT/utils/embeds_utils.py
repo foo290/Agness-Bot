@@ -6,8 +6,6 @@ import datetime as dt
 
 COMMAND_PREFIX = configs.COMMAND_PREFIX
 BOT_NAME = configs.BOT_NAME
-NOW_PLAYING_GIF_URL = configs.NOW_PLAYING_GIF_URL
-INITIAL_CONNECT_GIF_URL = configs.INITIAL_CONNECT_GIF_URL
 
 
 @export
@@ -103,7 +101,6 @@ class EventEmbeds:
             timestamp=dt.datetime.utcnow(),
             colour=discord.Color.green()
         )
-        print(GetUrl.get('wc02_gif'))
         embed.set_image(url=GetUrl.get('wc02_gif'))
 
         return embed
@@ -118,9 +115,6 @@ class EventEmbeds:
         )
         embed.set_footer(text=f'Powered by : {BOT_NAME}')
         return embed
-
-    def diwali(self):
-        return "https://firebasestorage.googleapis.com/v0/b/discord-bot-294607.appspot.com/o/bot%2Fgifs%2Fother_gifs%2Fdiwali_fireworks.gif?alt=media&token=0d245a52-02ee-4c43-92e7-df59823d4795"
 
 
 @export

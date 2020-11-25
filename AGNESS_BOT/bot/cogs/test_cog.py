@@ -21,15 +21,6 @@ class Test(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name='slap')
-    async def slap_command(self, ctx, member: Union[discord.Member, str]):
-        await ctx.send(
-            embed=SillyCommands().slap_member(
-                ctx.author,
-                member, ctx.author.color
-            )
-        )
-
     @commands.command()
     async def role(self, ctx):
         # await user.add_roles(role, reason=reason)
