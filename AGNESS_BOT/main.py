@@ -9,7 +9,7 @@ from AGNESS_BOT import (
     configs,
     custom_help_cmd,
     EventEmbeds,
-    member_join_step_verification
+    member_join_self_verification
 )
 
 embed_msgs = EventEmbeds()
@@ -30,9 +30,8 @@ COGS_DIR = configs.COGS_DIR
 
 
 @bot.listen('on_message')
-@member_join_step_verification(
-    bot=bot,
-    logger=putlog,
+@member_join_self_verification(
+    bot=bot, logger=putlog,
     self_verification=configs.MEMBER_JOIN_SELF_VERIFICATION,
     verification_venue_channel=configs.FIRST_REDIRECT_CHANNEL
 )

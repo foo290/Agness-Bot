@@ -45,9 +45,9 @@ OWNER_IDS = {
 }
 
 BOT_CONFIGS = {
-    'BOT_NAME': "Agness",
-    'COMMAND_PREFIX': ".",
-    'BOT_TOKEN': os.environ.get('AGNESS_BOT_TOKEN'),
+    'BOT_NAME': "Amadeus",
+    'COMMAND_PREFIX': "!",
+    'BOT_TOKEN': os.environ.get('AMADEUS_BOT_TOKEN'),
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS_DIR': COGS_DIR,
     'COGS': COGS,
@@ -60,6 +60,7 @@ BOT_CONFIGS = {
 GUILDS_CONFIG = {
     'FIRST_REDIRECT_CHANNEL': 773203865151602729,  # Welcome Channel!
     'RULES_CHANNEL': 773219713026621490,
+    'GOODBYE_CHANNEL': 773208141616906251,
 
     'MEMBER_JOIN_SELF_VERIFICATION': True,
 
@@ -71,9 +72,7 @@ GUILDS_CONFIG = {
 FUNCTIONALITIES = {
     'MANAGE_NEW_JOINING': True,
     'MANAGE_MEMBER_LEFT': True,
-    'MANAGE_MUSIC': True,
-    'MANAGE_MODERATION': True,
-    'MANAGE_MESSAGES': True
+    'SEND_DM_ON_JOIN': True
 }
 
 # This is currently configured to get a dm by bot when bot is online.

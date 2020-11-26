@@ -63,7 +63,7 @@ def show_typing(interval=configs.TYPING_INTERVAL):
     return top_wrapper
 
 
-def member_join_step_verification(**kw):
+def member_join_self_verification(**kw):
     """
     **********************  MEMBER SELF VERIFICATION SYSTEM  ********************************************
 
@@ -146,5 +146,5 @@ def member_join_step_verification(**kw):
 
 __all__ = [
     "check_valid_channel",
-    "export", "show_typing", "member_join_step_verification"
+    "export", "show_typing", "member_join_self_verification"
 ]
