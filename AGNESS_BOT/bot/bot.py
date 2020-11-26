@@ -62,8 +62,8 @@ class DemonBot(Bot):
 
     async def on_member_join(self, member) -> None:
         """
-        Assign a role of "DEFAULT_ROLE" to every user who join the server.
-        DEFAULT_ROLE: This is defined in resonate_settings.py
+        Assign a role of "UNVERIFIED" to every user who join the server.
+        UNVERIFIED: This is defined in settings.py
         :param member: Passed by discord, the user who joined the server.
         :return: None
         """
