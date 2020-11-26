@@ -45,9 +45,9 @@ OWNER_IDS = {
 }
 
 BOT_CONFIGS = {
-    'BOT_NAME': "Amadeus",
-    'COMMAND_PREFIX': "!",
-    'BOT_TOKEN': os.environ.get('AMADEUS_BOT_TOKEN'),
+    'BOT_NAME': "Agness",
+    'COMMAND_PREFIX': ".",
+    'BOT_TOKEN': os.environ.get('AGNESS_BOT_TOKEN'),
     'OWNER_IDS': list(OWNER_IDS.values()),
     'COGS_DIR': COGS_DIR,
     'COGS': COGS,
@@ -78,7 +78,7 @@ FUNCTIONALITIES = {
 # This is currently configured to get a dm by bot when bot is online.
 DM_CONFIGS = {
     'DM_RECIPIENT': [OWNER_IDS['Nitin']],
-    'SEND_DM': False,
+    'SEND_DM': True,
     "ON_CONNECT": True
 }
 
