@@ -68,48 +68,54 @@ class DemonBot(Bot):
         :return: None
         """
         if configs.MANAGE_NEW_JOINING:
+            if configs.FIRST_REDIRECT_CHANNEL and configs.RULES_CHANNEL:
 
-            channel = self.get_channel(configs.FIRST_REDIRECT_CHANNEL)
-            rules_channel = self.get_channel(configs.RULES_CHANNEL)
+                channel = self.get_channel(configs.FIRST_REDIRECT_CHANNEL)
+                rules_channel = self.get_channel(configs.RULES_CHANNEL)
 
-            putlog.info(f'{member} has joined!')
+                putlog.info(f'{member} has joined!')
 
-            if configs.MEMBER_JOIN_SELF_VERIFICATION:
-                putlog.debug('Self-verification enabled...')
-                putlog.debug(f'Assigning {configs.UNVERIFIED} role to user.')
+                if configs.MEMBER_JOIN_SELF_VERIFICATION:
+                    putlog.debug('Self-verification enabled...')
+                    putlog.debug(f'Assigning {configs.UNVERIFIED} role to user.')
 
-                role = discord.utils.get(member.guild.roles, name=configs.UNVERIFIED)
-                await member.add_roles(role)
-                putlog.info(f"{member} has assigned with {role} role.")
+                    role = discord.utils.get(member.guild.roles, name=configs.UNVERIFIED)
+                    await member.add_roles(role)
+                    putlog.info(f"{member} has assigned with {role} role.")
 
-                if configs.SEND_DM_ON_JOIN:
-                    await member.send(f'**Welcome to {member.guild.name}! 😃**\n'
-                                      f'Hello {member.display_name}, I am {bot.user.display_name}!\n'
-                                      f'You have to write **i agree ####** in {channel.mention} where **####** '
-                                      f'is the four digits after your username in  discord. \n\n'
-                                      f'for example if i have username **example#1234**, then I would type i agree 1234".\n\n'
-                                      f'**But first, read the {rules_channel.mention}**\n\n'
-                                      f'Welcome again and have fun 🎉 🥳')
+                    if configs.SEND_DM_ON_JOIN:
+                        await member.send(f'**Welcome to {member.guild.name}! 😃**\n'
+                                          f'Hello {member.display_name}, I am {bot.user.display_name}!\n'
+                                          f'You have to write **i agree ####** in {channel.mention} where **####** '
+                                          f'is the four digits after your username in  discord. \n\n'
+                                          f'for example if i have username **example#1234**, '
+                                          f'then I would type i agree 1234".\n\n'
+                                          f'**But first, read the {rules_channel.mention}**\n\n'
+                                          f'Welcome again and have fun 🎉 🥳')
+                else:
+                    putlog.debug('Self-verification disabled...')
+                    putlog.debug(f'Assigning {configs.DEFAULT_ROLE} role to user.')
+
+                    role = discord.utils.get(member.guild.roles, name=configs.UNVERIFIED)
+                    await member.add_roles(role)
+                    putlog.info(f"{member} has assigned with {role} role.")
+
+                    if configs.SEND_DM_ON_JOIN:
+                        await member.send(
+                            f'**Welcome to {member.guild.name}! 😃**\n'
+                            f'Hello {member.display_name}, I am {bot.user.display_name}!\n'
+                            f'Hope you will enjoy the community...'
+                        )
+
+                if not member.bot:
+                    await channel.send(f'{member.mention} just arrived! ♥ Welcome to {member.guild.name} 😀 \n'
+                                       f'Lets make you familiar with rules : '
+                                       f'{rules_channel.mention}')
+                    await channel.send(embed=EventEmbeds().member_join(member, rules_channel))
             else:
-                putlog.debug('Self-verification disabled...')
-                putlog.debug(f'Assigning {configs.DEFAULT_ROLE} role to user.')
-
-                role = discord.utils.get(member.guild.roles, name=configs.UNVERIFIED)
-                await member.add_roles(role)
-                putlog.info(f"{member} has assigned with {role} role.")
-
-                if configs.SEND_DM_ON_JOIN:
-                    await member.send(
-                        f'**Welcome to {member.guild.name}! 😃**\n'
-                        f'Hello {member.display_name}, I am {bot.user.display_name}!\n'
-                        f'Hope you will enjoy the community...'
-                    )
-
-            if not member.bot:
-                await channel.send(f'{member.mention} just arrived! ♥ Welcome to {member.guild.name} 😀 \n'
-                                   f'Lets make you familiar with rules : '
-                                   f'{rules_channel.mention}')
-                await channel.send(embed=EventEmbeds().member_join(member, rules_channel))
+                putlog.debug(f'FIRST_REDIRECT_CHANNEL or RULES_CHANNEL are not set')
+        else:
+            putlog.debug('MANAGE_NEW_JOINING functionality is turned off.')
 
     async def on_member_remove(self, member) -> None:
         """
@@ -117,7 +123,7 @@ class DemonBot(Bot):
         :param member: Passed by discord, the member related to the event.
         :return: None
         """
-        if configs.MANAGE_MEMBER_LEFT:
+        if configs.MANAGE_MEMBER_LEFT and configs.GOODBYE_CHANNEL:
 
             channel = self.get_channel(configs.GOODBYE_CHANNEL)
             if not member.bot:
