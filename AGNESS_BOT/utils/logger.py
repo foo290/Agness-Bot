@@ -1,7 +1,7 @@
 from AGNESS_BOT import configs
 from .decorators import export
 import logging
-import sys
+import sys, os
 
 LOG_FILE = configs.LOG_FILE
 
@@ -53,12 +53,18 @@ def get_custom_logger(name, level=logging.DEBUG, console=True):
     _logger = logging.Logger(name)
 
     try:
+        if not os.path.exists(LOG_FILE):
+            dirs = LOG_FILE.strip().split('/')
+            for _dir in dirs:
+                if '.' not in _dir:
+                    os.makedirs(f"{configs.BASE_DIR}/{_dir}")
+            open(f"{configs.BASE_DIR}/{LOG_FILE}", 'a').close()
         filehandler = logging.FileHandler(LOG_FILE)
         filehandler.setLevel(level)
         filehandler.setFormatter(formatter)
         _logger.addHandler(filehandler)
-    except:
-        pass
+    except Exception as e:
+        raise e
 
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setLevel(level)

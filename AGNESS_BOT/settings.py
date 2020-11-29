@@ -30,6 +30,9 @@ Computer Operation Groups : Add your cog here.
 COG_DIR and COGS make the complete import later in core code. Ex :
     --> Every COG is imported as COGS_DIR + cog_name_defined_in_COGS
 """
+
+BASE_DIR = os.getcwd()
+
 COGS = [
     'admin_cmds',
     'dm_cmds',
@@ -109,7 +112,8 @@ configs = Config(
     DM_CONFIGS,
     ROLE_ALIASES,
     GUILDS_CONFIG,
-    FUNCTIONALITIES
+    FUNCTIONALITIES,
+    BASE_DIR=BASE_DIR
 )
 
 # CLOUD CONFIGS:

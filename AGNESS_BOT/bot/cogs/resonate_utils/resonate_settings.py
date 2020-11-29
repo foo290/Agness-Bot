@@ -6,7 +6,6 @@ This module contains configuration for music player.
 """
 
 from dataclasses import dataclass
-import os
 
 
 @dataclass()
@@ -49,10 +48,10 @@ class Configs(object):
     PAGINATION_LIMIT: int = 6
     UPCOMING_TRACKS_LIMIT: int = 2
 
-    # CUSTOM_EMOJIS
+    # CUSTOM_EMOJIS (These are optional but if set, the emojis will be used as icons on embeds)
     YT: str = "<:yt:775306162622955611> YouTube"
     SC: str = "<:sc:775309222032048178> SoundCloud"
-    R_BEATS: str = "<:resonate:775316195745726504>"
+    R_BEATS: str = "<:resonate:782280388332355586>"
 
     # Logging
     STDOUT_LOGS: bool = True

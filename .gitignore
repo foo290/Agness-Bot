@@ -11,11 +11,11 @@ AGNESS_BOT/.idea/
 AGNESS_BOT/__pycache__/
 AGNESS_BOT/test/
 AGNESS_BOT/user_interaction/
-AGNESS_BOT/utils/
+
 AGNESS_BOT/web_crawler_cache/
-AGNESS_BOT/ *.py
+
 AGNESS_BOT/bot/__pycache__/
-AGNESS_BOT/bot/ *.py
+
 Trash/
 
 

@@ -207,9 +207,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         putlog.warning('Disconnecting Node.')
         player = self.get_player(ctx)
         await ctx.send('Leaving...')
+        await self.cleanup_on_exit(player=player)
         await player.teardown()
         await ctx.send('Disconnected!')
-        await self.cleanup_on_exit(player=player)
         putlog.warning('Node Disconnected by disconnect_command!')
 
     async def cleanup_on_exit(self, **kwargs):
@@ -315,13 +315,16 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             songs = await self.wavelink.get_tracks(f"ytsearch:{query}")
             if songs:
                 await self.remove_search_embed()
-                await player.add_tracks(ctx, songs, search_engine=Configs.YT)
+                se = Configs.YT if Configs.YT else None
+                await player.add_tracks(ctx, songs, search_engine=se)
             else:
                 temp = await self.wavelink.get_tracks(f"scsearch:{query}")
                 await self.remove_search_embed()
-                await player.add_tracks(ctx, temp, search_engine=Configs.SC)
+                se = Configs.YT if Configs.YT else None
+                await player.add_tracks(ctx, temp, search_engine=se)
             return
         await player.add_tracks(ctx, await self.wavelink.get_tracks(query))
+        await self.remove_search_embed()
         return
 
         # ----------------------------------------------------------------------
