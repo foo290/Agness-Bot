@@ -59,7 +59,7 @@ ROLE_ALIASES = {
 <p id='addingcogs'>
 <h3> Adding Cogs :</h3>
 
-Add **name** of your cog / extension files here...
+Add **name** of your cog / extension files <a href='https://github.com/foo290/Agness-Bot/blob/c76a765e5a0fe22aa46d17db56313c1cdf741816/AGNESS_BOT/settings.py#L36'>here...</a>
 
 ```
 COGS = [
