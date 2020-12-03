@@ -179,4 +179,3 @@ To know how to add your cog files, see <a href="#addingcogs">Adding your cog fil
 
 
 
-Documentation has to be done yet... :/
