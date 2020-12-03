@@ -2,6 +2,7 @@ from AGNESS_BOT import configs
 from .decorators import export
 import logging
 import sys, os
+import pathlib
 
 LOG_FILE = configs.LOG_FILE
 
@@ -54,10 +55,9 @@ def get_custom_logger(name, level=logging.DEBUG, console=True):
 
     try:
         if not os.path.exists(LOG_FILE):
-            dirs = LOG_FILE.strip().split('/')
-            for _dir in dirs:
-                if '.' not in _dir:
-                    os.makedirs(f"{configs.BASE_DIR}/{_dir}")
+            splitted = LOG_FILE.strip().split('/')
+            dirs = '/'.join(splitted[:-1])
+            pathlib.Path(dirs).mkdir(parents=True, exist_ok=True)
             open(f"{configs.BASE_DIR}/{LOG_FILE}", 'a').close()
         filehandler = logging.FileHandler(LOG_FILE)
         filehandler.setLevel(level)
