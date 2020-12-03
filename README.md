@@ -56,9 +56,10 @@ ROLE_ALIASES = {
   </a>
 </h2>
 
-### COGS :
+<p id='addingcogs'>
+<h3> Adding Cogs :</h3>
 
-Add **name** of your cog / extension files here...
+Add **name** of your cog / extension files <a href='https://github.com/foo290/Agness-Bot/blob/c76a765e5a0fe22aa46d17db56313c1cdf741816/AGNESS_BOT/settings.py#L36'>here...</a>
 
 ```
 COGS = [
@@ -68,7 +69,7 @@ COGS = [
     ...
    ]
 ```
-
+</p>
 
 ### COGS directory path :
 
@@ -156,5 +157,25 @@ FUNCTIONALITIES = {
 
 </p>
 
+<p id='commands'>
 
-Documentation has to be done yet... :/
+<h2 align='center'>Commands 🛡</h2>
+
+The bot is equiped with a number of commands from saying simple "hi" msg to searching on google and many more for memes and fun...
+
+Every command is filtered by the roles you have, type **help** and it will show all the commands avalable for your specific role with their aliases and how to use them.
+
+</p>
+
+<p id='cogs'>
+
+<h2 align='center'>Loading Cogs 📍</h2>
+
+All the cog files are loaded at the boot time of bot, if there is a defective file or system failed to load the cog file for some reason, it will be shown as red error in the logs in console. 
+
+To know how to add your cog files, see <a href="#addingcogs">Adding your cog files</a>
+
+</p>
+
+
+
